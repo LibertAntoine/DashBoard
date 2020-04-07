@@ -1,5 +1,8 @@
 # dashboard
 
+
+think to add .env.local file in root with VUE_APP_APIKEY
+
 ## Project setup
 ```
 npm install
