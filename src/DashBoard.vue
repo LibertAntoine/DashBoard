@@ -21,7 +21,7 @@
       :datasets="
         [{
           label: this.city + ' Temperature (F°)',
-          backgroundColor: '#f87979',
+          backgroundColor: '#1B157C',
           data: this.datasets
         }]
       "
@@ -46,11 +46,6 @@ export default {
       datasets: [],
       city: "London"
     }
-  },
-  watch: { 
-    city: function() { 
-        console.log('ptouy')
-    },
   },
   created () {
     this.printData();
@@ -83,7 +78,6 @@ export default {
 #bar {
   padding: 40px;
 }
-
 
 
 </style>
