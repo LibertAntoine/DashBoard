@@ -33,6 +33,7 @@
 import DataApi from './services/Api/Data.js'
 import bar from './components/bar.js'
 import line from './components/line.js'
+import { dayTimeToDate } from './services/helpers/conversion'
 
 export default {
   name: 'App',
@@ -56,7 +57,7 @@ export default {
         console.log(this.city)
         let dataAPI = await DataApi.getCity16days(this.city);
         dataAPI.data.list.map((day) => {
-          this.labels.push(day.dt)
+          this.labels.push(dayTimeToDate(day.dt))
           this.datasets.push(parseInt(day.main.temp))
         });
       },
