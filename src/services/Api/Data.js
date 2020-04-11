@@ -16,6 +16,6 @@ export default {
         mode: "json",
       },
     });
-  }
-
+  },
+  getLocalCity16days: async (city) => await fetch('/localdata/' + city + '.json').then(res => res.json()).catch(err => console.error(err))
 };
