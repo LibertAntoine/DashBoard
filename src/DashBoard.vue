@@ -1,11 +1,7 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <select name="city" id="city-select" v-on:change="changeData">
-        <option value="London">London</option>
-        <option value="Paris">Paris</option>
-        <option value="Madrid">Madrid</option>
-    </select>
+    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
+    <DropDown :options="citiesList" :selected='this.city' @update="(city) => this.city = city"/> <br>
     <BarChart id='BarChart' 
       :labels="this.labels" 
       :datasets="
@@ -33,16 +29,19 @@
 import DataApi from './services/Api/Data'
 import BarChart from './components/BarChart'
 import LineChart from './components/LineChart'
+import DropDown from './components/DropDown'
 import { dayTimeToDate } from './services/helpers/conversion'
 
 export default {
   name: 'App',
   components: {
     BarChart,
-    LineChart
+    LineChart,
+    DropDown
   },
   data () {
     return {
+      citiesList: ['London', 'Paris', 'Madrid'],
       labels: [],
       datasets: [],
       city: "London"
@@ -65,9 +64,6 @@ export default {
         // const dataAPI = await DataApi.getLocalCity16days(this.city).data; // get data
         this.labels = dataAPI.data.list.map( day => dayTimeToDate(day.dt))
         this.datasets = dataAPI.data.list.map( day => parseInt(day.main.temp))
-      },
-      async changeData (e) {
-       this.city = e.target.value;
       }
   }
 
