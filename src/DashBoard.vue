@@ -2,7 +2,7 @@
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
     <DropDown :options="citiesList" :selected='this.city' @update="(city) => this.city = city"/> <br>
-    <BarChart id='BarChart' 
+    <BarChart id='BarChart' class="graph"
       :labels="this.labels" 
       :datasets="
         [{
@@ -12,7 +12,7 @@
         }]
       "
     />
-    <LineChart id='LineChart' 
+    <LineChart id='LineChart' class="graph"
       :labels="this.labels" 
       :datasets="
         [{
@@ -22,6 +22,15 @@
         }]
       "
     />
+
+    <Plotly class="graph"
+      :data="[{ x: this.labels, y: this.datasets, type: 'bar' }]"
+      :layout="{ 
+        title: this.city + ' Temperature (F°)',
+        yaxis: {range: [Math.min(...this.datasets), Math.max(...this.datasets)]}
+      }"
+      />
+
   </div>
 </template>
 
@@ -31,13 +40,15 @@ import BarChart from './components/BarChart'
 import LineChart from './components/LineChart'
 import DropDown from './components/DropDown'
 import { dayTimeToDate } from './services/helpers/conversion'
+import { Plotly } from 'vue-plotly'
 
 export default {
   name: 'App',
   components: {
     BarChart,
     LineChart,
-    DropDown
+    DropDown,
+    Plotly
   },
   data () {
     return {
@@ -75,7 +86,7 @@ export default {
   padding: 30px;
 }
 
-#BarChart, #LineChart {
+.graph {
   display: inline-block;
   padding: 40px;
   width: 500px;
