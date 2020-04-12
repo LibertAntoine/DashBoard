@@ -6,7 +6,7 @@
         <option value="Paris">Paris</option>
         <option value="Madrid">Madrid</option>
     </select>
-    <bar id='bar' 
+    <BarChart id='BarChart' 
       :labels="this.labels" 
       :datasets="
         [{
@@ -16,7 +16,7 @@
         }]
       "
     />
-    <lineChart id='line' 
+    <LineChart id='LineChart' 
       :labels="this.labels" 
       :datasets="
         [{
@@ -30,18 +30,18 @@
 </template>
 
 <script>
-import DataApi from './services/Api/Data.js'
-import bar from './components/bar.js'
-import line from './components/line.js'
+import DataApi from './services/Api/Data'
+import BarChart from './components/BarChart'
+import LineChart from './components/LineChart'
 import { dayTimeToDate } from './services/helpers/conversion'
 
 export default {
   name: 'App',
   components: {
-    bar,
-    lineChart : line
+    BarChart,
+    LineChart
   },
-  data: function () {
+  data () {
     return {
       labels: [],
       datasets: [],
@@ -49,22 +49,25 @@ export default {
     }
   },
   created () {
-    this.printData();
+    this.updateData(this.city);
+  },
+
+  watch: { // define watcher on our variable city and update the data if it changes
+    city: function (newCity) {
+      console.log('Selected city: ' + newCity)
+      this.updateData(newCity)
+    }
   },
   methods: {
-      async printData () 
-      {
-        console.log(this.city)
-        let dataAPI = await DataApi.getCity16days(this.city);
-        dataAPI.data.list.map((day) => {
-          this.labels.push(dayTimeToDate(day.dt))
-          this.datasets.push(parseInt(day.main.temp))
-        });
+      async updateData (city) {
+        console.log('update data for ' + city)
+        const dataAPI = await DataApi.getCity16days(city); // use local data instead
+        // const dataAPI = await DataApi.getLocalCity16days(this.city).data; // get data
+        this.labels = dataAPI.data.list.map( day => dayTimeToDate(day.dt))
+        this.datasets = dataAPI.data.list.map( day => parseInt(day.main.temp))
       },
-      async changeData (e)
-      {
+      async changeData (e) {
        this.city = e.target.value;
-       await this.printData();
       }
   }
 
@@ -76,9 +79,10 @@ export default {
   padding: 30px;
 }
 
-#bar {
+#BarChart, #LineChart {
+  display: inline-block;
   padding: 40px;
+  width: 500px;
 }
-
 
 </style>
