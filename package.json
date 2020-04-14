@@ -36,7 +36,17 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "vue/no-multi-spaces": "warn",
+      "vue/require-default-prop": "warn",
+      "vue/require-prop-types": "warn",
+      "vue/v-bind-style": "warn",
+      "vue/v-on-style": "warn",
+      "vue/arrow-spacing": "warn",
+      "no-unused-vars": "warn",
+      "prefer-const": "error",
+      "no-var": "error"
+    }
   },
   "browserslist": [
     "> 1%",
