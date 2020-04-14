@@ -2,6 +2,8 @@
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
     <DropDown :options="citiesList" :selected='this.city' @update="(city) => this.city = city"/> <br>
+    <p> ton ip est : {{ this.clientIp }} </p>
+    <div> {{ this.locationInformation }} </div>
     <BarChart id='BarChart' class="graph"
       :labels="this.labels" 
       :datasets="
@@ -55,11 +57,15 @@ export default {
       citiesList: ['London', 'Paris', 'Madrid'],
       labels: [],
       datasets: [],
-      city: "London"
+      city: "London",
+      clientIp: '',
+      locationInformation: {}
     }
   },
-  created () {
-    this.updateData(this.city);
+  async created () {
+    // this.updateData(this.city)
+    this.clientIp = await DataApi.getMyIp()
+    this.updatelocationInfos()
   },
 
   watch: { // define watcher on our variable city and update the data if it changes
@@ -75,9 +81,11 @@ export default {
         // const dataAPI = await DataApi.getLocalCity16days(this.city).data; // get data
         this.labels = dataAPI.data.list.map( day => dayTimeToDate(day.dt))
         this.datasets = dataAPI.data.list.map( day => parseInt(day.main.temp))
+      },
+      async updatelocationInfos () {
+        this.locationInformation = await DataApi.getLocationInformations(this.clientIp)
       }
   }
-
 }
 </script>
 
