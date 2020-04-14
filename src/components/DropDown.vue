@@ -17,7 +17,7 @@ export default {
     data() {
         return {   
             selectedOption: '',
-            showMenu: false,
+            showMenu: false
         }
     },
     props: {
@@ -27,41 +27,41 @@ export default {
         },
         selected: {
             type: [String],
-            default: '',
+            default: ''
         },
         placeholderText: {
             type: [String],
-            default: 'Please select an item',
+            default: 'Please select an item'
         },
         closeOnOutsideClick: {
             type: [Boolean],
-            default: true,
-        },
+            default: true
+        }
     },
 
     mounted() {
         this.selectedOption = this.selected;
-        if (this.closeOnOutsideClick) { document.addEventListener('click', this.clickHandler) } // add document click event 
+        if (this.closeOnOutsideClick) { document.addEventListener('click', this.clickHandler); } // add document click event 
     },
 
     beforeDestroy() { 
-        document.removeEventListener('click', this.clickHandler) // remove doc click event
+        document.removeEventListener('click', this.clickHandler); // remove doc click event
     },
 
     methods: {
         updateOption(option) {
-            this.selectedOption = option
-            this.showMenu = false
-            this.$emit('update', this.selectedOption)
+            this.selectedOption = option;
+            this.showMenu = false;
+            this.$emit('update', this.selectedOption);
         },
 
-        toggleMenu() { this.showMenu = !this.showMenu },
+        toggleMenu() { this.showMenu = !this.showMenu; },
 
         clickHandler(event) {
-            const { target } = event
-            const { $el } = this
+            const { target } = event;
+            const { $el } = this;
 
-            if (!$el.contains(target)) { this.showMenu = false }
+            if (!$el.contains(target)) { this.showMenu = false; }
         },
     }
 }
