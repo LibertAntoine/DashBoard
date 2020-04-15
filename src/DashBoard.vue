@@ -166,6 +166,10 @@ export default {
 </script>
 
 <style>
+body {
+	background-color: white;
+}
+
 #app {
   padding: 30px;
   background-color : #373635;

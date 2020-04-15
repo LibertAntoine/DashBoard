@@ -14,6 +14,7 @@
     "leaflet": "^1.6.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-vue": "^0.10.1",
+    "d3": "^5.15.1",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",
     "vue-plotly": "^1.1.0",
@@ -23,11 +24,15 @@
     "@vue/cli-plugin-babel": "^4.3.1",
     "@vue/cli-plugin-eslint": "^4.3.1",
     "@vue/cli-service": "^4.3.1",
+    "@tweenjs/tween.js": "^18.5.0",
+    "@types/d3": "^5.7.2",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "sass": "^1.26.3",
     "sass-loader": "^8.0.2",
+    "less": "^3.11.1",
+    "less-loader": "^5.0.0",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
