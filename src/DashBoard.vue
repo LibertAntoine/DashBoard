@@ -4,6 +4,11 @@
     <DropDown :options="citiesList" :selected='this.city' @update="(city) => this.city = city"/> <br>
     <p> ton ip est : {{ this.clientIp }} </p>
     <div> {{ this.locationInformation }} </div>
+    <SunDisplay
+      width= '300px'
+      :sunriseHours= this.locationInformation.sunrise
+      :sunsetHours= this.locationInformation.sunset
+    />
     <BarChart id='BarChart' class="graph"
       :labels="this.labels" 
       :datasets="
@@ -38,10 +43,12 @@
 
 <script>
 import DataApi from './services/Api/Data'
+import { dayTimeToDate } from './services/helpers/conversion'
+
 import BarChart from './components/BarChart'
 import LineChart from './components/LineChart'
 import DropDown from './components/DropDown'
-import { dayTimeToDate } from './services/helpers/conversion'
+import SunDisplay from './components/SunDisplay'
 import { Plotly } from 'vue-plotly'
 
 export default {
@@ -50,16 +57,20 @@ export default {
     BarChart,
     LineChart,
     DropDown,
-    Plotly
+    Plotly,
+    SunDisplay
   },
   data () {
     return {
       citiesList: ['London', 'Paris', 'Madrid'],
       labels: [],
       datasets: [],
-      city: "London",
+      city: 'London',
       clientIp: '',
-      locationInformation: {}
+      locationInformation: {
+        sunset: '00:00',
+        sunrise: '00:00'
+      }
     }
   },
   async created () {
