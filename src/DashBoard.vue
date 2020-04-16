@@ -1,7 +1,17 @@
 <template>
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-    <DropDown :options="citiesList" :selected='this.city' @update="(city) => this.city = city"/> <br>
+    <p> ton ip est : {{ this.clientIp }} </p>
+    <DropDown 
+      :options='citiesList' 
+      :placeholderText='"select a city"' 
+      @update="(city) => this.city = city"
+    /> 
+    <SunDisplay
+      width= '300px'
+      :sunriseHours= this.locationInformation.sunrise
+      :sunsetHours= this.locationInformation.sunset
+    />
     <BarChart id='BarChart' class="graph"
       :labels="this.labels" 
       :datasets="
@@ -36,10 +46,12 @@
 
 <script>
 import DataApi from './services/Api/Data'
+import { dayTimeToDate } from './services/helpers/conversion'
+
 import BarChart from './components/BarChart'
 import LineChart from './components/LineChart'
 import DropDown from './components/DropDown'
-import { dayTimeToDate } from './services/helpers/conversion'
+import SunDisplay from './components/SunDisplay'
 import { Plotly } from 'vue-plotly'
 
 export default {
@@ -48,18 +60,28 @@ export default {
     BarChart,
     LineChart,
     DropDown,
-    Plotly
+    Plotly,
+    SunDisplay
   },
   data () {
     return {
       citiesList: ['London', 'Paris', 'Madrid'],
       labels: [],
       datasets: [],
-      city: "London"
+      city: 'London',
+      clientIp: '',
+      locationInformation: {
+        sunset: '00:00',
+        sunrise: '00:00'
+      },
+      location: {}
     }
   },
-  created () {
-    this.updateData(this.city);
+  async created () {
+    this.clientIp = await DataApi.getMyIp();
+    this.location = await DataApi.getLocation();
+    // update location information with our longitude & latitude
+    this.locationInformation = await DataApi.getLocationInfos(this.location.lat, this.location.long);
   },
 
   watch: { // define watcher on our variable city and update the data if it changes
@@ -77,7 +99,6 @@ export default {
         this.datasets = dataAPI.data.list.map( day => parseInt(day.main.temp))
       }
   }
-
 }
 </script>
 
