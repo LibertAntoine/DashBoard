@@ -24,7 +24,7 @@ export default {
 
   getMyIp: async () => await axios.get('https://api.ipify.org?format=json').then(response => response.data.ip).catch(err => console.error(err)),
 
-  getLocationInformations: async (ip) => {
+  getLocationInfosFromIp: async (ip) => {
     return await ipgeolocationApi.get('astronomy', {
       params: {
         apiKey: process.env.VUE_APP_API_APIKEY_IPGEOLOCATION,
@@ -32,5 +32,46 @@ export default {
         ip: ip
       }
     }).then(response => response.data).catch(err => console.error(err))
+  },
+  getLocationInfos: async (lat, long) => {
+    return await ipgeolocationApi.get('astronomy', {
+      params: {
+        apiKey: process.env.VUE_APP_API_APIKEY_IPGEOLOCATION,
+        lang: 'fr',
+        lat: lat,
+        long: long
+      }
+    }).then(response => response.data).catch(err => console.error(err))
+  },
+
+  getLocation: async () => {
+    if (navigator.geolocation) {
+      return await new Promise(function(resolve, reject) {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      })
+      .then(res => {
+        return {lat: res.coords.latitude, long: res.coords.longitude, accuracy: res.coords.accuracy}; 
+      })  
+      .catch((error) => {
+        console.log('Erreur lors de la géolocalisation :');
+        switch (error.code) {
+          case error.TIMEOUT:
+            console.log('Timeout !');
+            break;
+          case error.PERMISSION_DENIED:
+            console.log('Vous n’avez pas donné la permission');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            console.log('La position n’a pu être déterminée');
+            break;
+          case error.UNKNOWN_ERROR:
+            console.log('Erreur inconnue');
+            break;
+        }
+      });
+    } else {
+      console.log('API navigator.geolocation non disponible');
+      return undefined;
+    }
   }
 }
