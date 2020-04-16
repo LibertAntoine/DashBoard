@@ -6,7 +6,21 @@
       :options='citiesList' 
       :placeholderText='"select a city"' 
       @update="(city) => this.city = city"
-    /> 
+    />
+    <Modal 
+      ref="mapModal"
+      :title= "'test titre'"
+      :overlayColor= "'#000000'"
+      :overlayOpacity= 0.4
+    > 
+      <p>test du component Modal</p>
+      <DropDown 
+        :options='[1, 2, 3, 4, 5]' 
+        :placeholderText='"select a number"'
+      />
+
+    </Modal>
+    <button @click.prevent="$refs.mapModal.open">open modal</button>
     <SunDisplay
       width= '300px'
       :sunriseHours= this.locationInformation.sunrise
@@ -59,6 +73,7 @@ import LineChart from './components/LineChart'
 import DropDown from './components/DropDown'
 import SunDisplay from './components/SunDisplay'
 import MoonPhase from './components/MoonPhase'
+import Modal from './components/Modal'
 import { Plotly } from 'vue-plotly'
 
 export default {
@@ -69,7 +84,8 @@ export default {
     DropDown,
     Plotly,
     SunDisplay,
-    MoonPhase
+    MoonPhase,
+    Modal
   },
   data () {
     return {

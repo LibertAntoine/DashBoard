@@ -8,7 +8,7 @@
         v-if="visibility.overlay"
     >
         <transition name="modalTransition">
-            <div 
+            <div
                 class="modal" 
                 role="dialog" 
                 aria-labelledby="modalTitle" 
