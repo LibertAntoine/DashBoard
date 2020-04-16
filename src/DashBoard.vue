@@ -1,9 +1,12 @@
 <template>
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-    <DropDown :options="citiesList" :selected='this.city' @update="(city) => this.city = city"/> <br>
     <p> ton ip est : {{ this.clientIp }} </p>
-    <div> {{ this.locationInformation }} </div>
+    <DropDown 
+      :options='citiesList' 
+      :placeholderText='"select a city"' 
+      @update="(city) => this.city = city"
+    /> 
     <SunDisplay
       width= '300px'
       :sunriseHours= this.locationInformation.sunrise
@@ -70,13 +73,15 @@ export default {
       locationInformation: {
         sunset: '00:00',
         sunrise: '00:00'
-      }
+      },
+      location: {}
     }
   },
   async created () {
-    // this.updateData(this.city)
-    this.clientIp = await DataApi.getMyIp()
-    this.updatelocationInfos()
+    this.clientIp = await DataApi.getMyIp();
+    this.location = await DataApi.getLocation();
+    // update location information with our longitude & latitude
+    this.locationInformation = await DataApi.getLocationInfos(this.location.lat, this.location.long);
   },
 
   watch: { // define watcher on our variable city and update the data if it changes
@@ -92,9 +97,6 @@ export default {
         // const dataAPI = await DataApi.getLocalCity16days(this.city).data; // get data
         this.labels = dataAPI.data.list.map( day => dayTimeToDate(day.dt))
         this.datasets = dataAPI.data.list.map( day => parseInt(day.main.temp))
-      },
-      async updatelocationInfos () {
-        this.locationInformation = await DataApi.getLocationInformations(this.clientIp)
       }
   }
 }

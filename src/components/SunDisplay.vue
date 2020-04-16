@@ -49,7 +49,6 @@ export default {
 
     computed: {
         strokeDashoffset() {
-            // console.log('strokeDashoffset compute')
             return this.length * (1 - this.percentage);
         },
         sunriseMinCount() {
