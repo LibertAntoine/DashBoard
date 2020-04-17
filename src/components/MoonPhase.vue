@@ -16,8 +16,7 @@
 
 <script>
 
-import { bound, quadraticBezierLength, quadraticBezierpos } from '../services/helpers/math'
-import { JulianDay, moonPhase } from '../services/helpers/math'
+import { bound, JulianDay, moonPhase } from '../services/helpers/math'
 
 export default {
     
