@@ -27,7 +27,7 @@ export default {
   getLocationInfosFromIp: async (ip) => {
     return await ipgeolocationApi.get('astronomy', {
       params: {
-        apiKey: process.env.VUE_APP_API_APIKEY_IPGEOLOCATION,
+        apiKey: process.env.VUE_APP_APIKEY_IPGEOLOCATION,
         lang: 'fr',
         ip: ip
       }
@@ -36,7 +36,7 @@ export default {
   getLocationInfos: async (lat, long) => {
     return await ipgeolocationApi.get('astronomy', {
       params: {
-        apiKey: process.env.VUE_APP_API_APIKEY_IPGEOLOCATION,
+        apiKey: process.env.VUE_APP_APIKEY_IPGEOLOCATION,
         lang: 'fr',
         lat: lat,
         long: long
@@ -50,7 +50,7 @@ export default {
         navigator.geolocation.getCurrentPosition(resolve, reject);
       })
       .then(res => {
-        return {lat: res.coords.latitude, long: res.coords.longitude, accuracy: res.coords.accuracy}; 
+        return {latitude: res.coords.latitude, longitude: res.coords.longitude, accuracy: res.coords.accuracy}; 
       })  
       .catch((error) => {
         console.log('Erreur lors de la géolocalisation :');
