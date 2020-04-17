@@ -1,4 +1,4 @@
-export const bound = (v, min = 0, max = 1) => Math.min(min, Math.max(v, max));
+export const bound = (v, min = 0, max = 1) => Math.min(max, Math.max(v, min));
 
 export const normalize = (v, vmin, vmax, tmin, tmax) => tmin + (bound(v, vmin, vmax) - vmin) / (vmax - vmin) * (tmax - tmin);
 

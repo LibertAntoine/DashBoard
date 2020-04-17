@@ -12,6 +12,12 @@
       :sunriseHours= this.locationInformation.sunrise
       :sunsetHours= this.locationInformation.sunset
     />
+    <MoonPhase
+      :testPercentage= this.MoonPhaseTestPercentage
+      width= '200px'
+    />
+    <input type="range" min="0" max="100" value="25" class="slider" id="myRange" @input="updatePercentage">
+    <br/>
     <BarChart id='BarChart' class="graph"
       :labels="this.labels" 
       :datasets="
@@ -52,6 +58,7 @@ import BarChart from './components/BarChart'
 import LineChart from './components/LineChart'
 import DropDown from './components/DropDown'
 import SunDisplay from './components/SunDisplay'
+import MoonPhase from './components/MoonPhase'
 import { Plotly } from 'vue-plotly'
 
 export default {
@@ -61,7 +68,8 @@ export default {
     LineChart,
     DropDown,
     Plotly,
-    SunDisplay
+    SunDisplay,
+    MoonPhase
   },
   data () {
     return {
@@ -74,7 +82,8 @@ export default {
         sunset: '00:00',
         sunrise: '00:00'
       },
-      location: {}
+      location: {},
+      MoonPhaseTestPercentage: 0
     }
   },
   async created () {
@@ -97,6 +106,9 @@ export default {
         // const dataAPI = await DataApi.getLocalCity16days(this.city).data; // get data
         this.labels = dataAPI.data.list.map( day => dayTimeToDate(day.dt))
         this.datasets = dataAPI.data.list.map( day => parseInt(day.main.temp))
+      },
+      updatePercentage(event) {
+        this.MoonPhaseTestPercentage = parseInt(event.target.value) / 100;
       }
   }
 }
