@@ -24,6 +24,7 @@ export default {
 			animatedData: [],
 			path: null,
 			dots: null,
+			circles: {},
 			dotsHover: null,
 			range: []
 		}
@@ -35,7 +36,7 @@ export default {
 	},
 	async mounted() {
 		this.buildSVG();
-		this.buildDots();
+		//this.buildDots();
 		await this.showDotsgradually()
 		this.tweenDots()
 			.onComplete(this.buildLines)
@@ -43,17 +44,41 @@ export default {
 	methods: {
 		buildLines() {
 			const lines = d3.range(0, 30, 5);
-			d3.select(this.$refs.svg).selectAll('line')
+
+			const size = this.scaleX(this.data.length - 1) - this.scaleX(0);
+
+			const line = d3.select(this.$refs.svg).selectAll('line.line')
 				.data(lines)
 				.enter()
 				.append('line')
-				.attr('x1', this.scaleX(0))
-				.attr('y1', d => this.scaleY(d))
-				.attr('x2', this.scaleX(this.data.length - 1))
-				.attr('y2', d => this.scaleY(d))
-				.attr("transform", (d, i) => "translate(" + ( - 600 - (lines.length-1-i) * 150) + ", 0)")
-				.transition().duration(750).ease(d3.easeLinear)
-				.attr("transform", () => "translate(0, 0)")
+					.attr('class', "line")
+					.attr('x1', this.scaleX(0))
+					.attr('y1', d => this.scaleY(d))
+					.attr('x2', this.scaleX(this.data.length - 1))
+					.attr('y2', d => this.scaleY(d))
+				.attr('stroke-dasharray', size)
+				.attr('stroke-dashoffset', (d, i) => size + i * 100)
+				.attr('opacity', 0)
+
+			// NOTE line opacity
+			// This method of passing via each is necessary to catch the index, selection.call can't get it apparently
+			line.each((d, i, nodes) => {
+				d3.select(nodes[i]).call(opacityAnim, 400, i)
+			})
+
+			function opacityAnim(line, duration, index) {
+				d3.select({}).transition().duration(duration)
+					.tween("attr:opacity", function() {
+						const interpolate = d3.interpolateNumber(0, 1)
+						return function(t) { 
+							line.attr("opacity", interpolate(t));
+						};
+					});
+			}
+
+			// NOTE line move
+			line.transition().duration(750).ease(d3.easeQuadInOut)
+				.attr('stroke-dashoffset', 0)
 		},
 		tweenDots() {
 			function animate(time) {
@@ -65,11 +90,7 @@ export default {
 				.to(this.data, 1000)
 				.easing(TWEEN.Easing.Quadratic.Out)
 				.delay(500)
-				.onUpdate(() => {
-					this.dots = d3.select(this.$refs.svg).selectAll('circle.dot')
-						.data(this.animatedData)
-						.attr('cy', d => this.scaleY(d))
-				})
+				.onUpdate(this.buildDots)
 				.start()
 		},
 		tweenData(newData, oldData) {
@@ -92,15 +113,14 @@ export default {
 			return new Promise(resolve => {
 				let item = 0;
 				setTimeout(() => {
-					for (let i=0; i<this.data.length; i++) {
-						setTimeout(() => {
+					for (let i = 0; i < this.data.length; i++) {
+						setTimeout(async () => {
 							this.animatedData.push(15);
 							this.buildDots();
 							item += 20;
-
 							if (i == this.data.length - 1)
 								resolve();
-						}, ((400 / this.data.length) - item) * i);
+						}, ((800 / this.data.length) - item) * i);
 					}
 				}, 1500)
 			})
@@ -109,31 +129,58 @@ export default {
 			return d3.line().x((d, i) => this.scaleX(i)).y(d => this.scaleY(d))(this.animatedData);
 		},
 		buildDots() {
-			this.dots = d3.select(this.$refs.svg).selectAll('circle.dot')
-				.data(this.animatedData)
-				.enter()
-				.append('circle')
-				.classed('dot', true)
-				.attr('cx', (d, i) => this.scaleX(i))
-				.attr('cy', d => this.scaleY(d))
-				.attr('r', 4)
-				.attr('class', "dot");
+			this.dots = d3.select(this.$refs.svg).selectAll('g.dot')
+				.data(this.animatedData);
 
-			this.dotsHover = d3.select(this.$refs.svg).selectAll('circle.hover')
-				.data(this.data)
-				.enter()
-				.append('circle')
-				.classed("hover", true)
-				.attr('cx', (d, i) => this.scaleX(i))
-				.attr('cy', d => this.scaleY(d))
-				.attr('r', 11)
-				.on('mouseover', this.logHover)
+			const y_axis = d3.axisLeft()
+				.scale(this.scaleY)
+				.tickPadding(-6)
+				.ticks(5)
+
+			const y_axisEl = d3.select(this.$refs.svg).selectAll('g.y_axis').data([null])
+			y_axisEl.enter().append('g')
+				.attr('class', "y_axis")
+				.attr('style', "font-size: 1em")
+				.merge(y_axisEl)
+				.attr('transform', "translate(15, 0)")
+				.call(y_axis).call(g => g.select('.domain').remove())
+				.call(g => g.select('line').remove())
+			
+
+			// NOTE dots that are no longer here
+			this.dots.exit().remove();
+
+			// NOTE new dots
+			const g = this.dots.enter()
+					.append('g')
+					.classed('dot', true)
+					.on('mouseover', this.logHover)
+
+			// NOTE first dot (visible dot)
+			g.append('circle')
+					.attr('class', "visible")
+					.attr('r', 9)
+					.transition().duration(800)
+					.attr('r', 4)
+
+			// NOTE second dot (not visible dot)
+			g.append('circle')
+					.attr('class', "hover") 
+					.attr('r', 0)
+					.transition().duration(800)
+					.attr('r', 11)
+
+			// NOTE new and updated dots
+			this.dots.merge(g)
+				.attr('transform', (d, i) => {
+					return `translate(${this.scaleX(i)}, ${this.scaleY(d)})`
+				})
 		},
 		logHover(event) {
 			console.log(event)
 		},
 		buildSVG() {
-			this.scaleX = d3.scaleLinear().range([10, 590]).domain([0, this.data.length - 1]);
+			this.scaleX = d3.scaleBand().range([30, 590]).domain(this.data.map((el, i) => i))
 			this.rangeY = d3.scaleLinear().range([500, 0]);
 			this.scaleY = this.rangeY.domain([0, 30]);
 			this.path = d3.select(this.$refs.svg)
@@ -160,16 +207,17 @@ svg {
 		stroke: lightcoral;
 	}
 
-	circle {
+	g.dot {
 
-		&.dot {
+		circle {
 			fill: black;
+
+			&.hover {
+				fill: lightblue;
+				opacity: .5;
+			}
 		}
 
-		&.hover {
-			fill: lightblue;
-			opacity: .5;
-		}
 	}
 
 	line {
