@@ -1,8 +1,13 @@
 <template>
     <div class="moonPhase" :style="{'background-color': this.backgroundColor, 'width': this.width}">
         <div class="svgContainter">
-            <svg class="svg" viewBox="0 0 100 100" preserveAspectRatio="xMinYMin meet">
-                <!-- /* <path d="m 50 10 a 0.9 1 0 0 0 0 60" */ -->
+            <svg class="svg" viewBox="-2 -2 204 204" preserveAspectRatio="xMinYMin meet">
+                <g :transform="'rotate(' + this.waningRotate + ', 100, 100)'">
+                    <path d='M 100 0 A 100 100 0 1 1 100 200 Z' :fill="this.emptyColor" class='rightFill'/>
+                    <path :d="this.pathRight" :fill="this.fillColor" class='right'/>
+                    <path d='M 100 200 A 100 100 0 1 1 100 0 Z' :fill="this.fillColor" class='leftFill'/>
+                    <path :d="this.pathLeft" :fill="this.emptyColor" class='left'/>
+                </g>
             </svg>
         </div>
     </div>
@@ -12,7 +17,7 @@
 <script>
 
 import { bound, quadraticBezierLength, quadraticBezierpos } from '../services/helpers/math'
-import {JulianDay, moonPhase} from '../services/helpers/math'
+import { JulianDay, moonPhase } from '../services/helpers/math'
 
 export default {
     
@@ -26,7 +31,7 @@ export default {
     },
 
     mounted() {
-        this.timePhase = setInterval(() => this.updateTime(new Date()), 24 - new Date().hours());
+        this.timePhase = setInterval(() => this.updateDate(new Date()), 23 - new Date().getHours());
     },
 
     beforeDestroy() { 
@@ -37,12 +42,22 @@ export default {
         waning() {
             return this.percentage > 0.5
         },
-        sunAngle() {
-            return (this.percentage - 0.5) / 0.5
+        waningRotate() {
+            return this.waning ? 180 : 0
+        },
+        sunIntensity() {
+            const twice = this.percentage * 2;
+            return twice < 1 ? twice : 2 - twice;
         },
         // percentage Between Two New Moon
         percentage() {
-            return moonPhase(JulianDay(this.time.day, this.time.month, this.time.year));
+            return this.testPercentage !== 0 ? this.testPercentage : moonPhase(JulianDay(this.time.day, this.time.month, this.time.year));
+        },
+        pathRight () {
+            return 'M 100 0 A ' + (100 * bound((this.sunIntensity - 0.5) * 2, 0, 1)) + ' 100 0 1 1 100 200';
+        },
+        pathLeft () {
+            return 'M 100 200 A ' + (100 * (1 - bound(this.sunIntensity * 2, 0, 1))) + ' 100 0 1 1 100 0';
         }
     },
 
@@ -51,6 +66,10 @@ export default {
             type: String,
             default: '#f77a52'
         },
+        emptyColor: {
+            type: String,
+            default: '#555555'
+        },
         backgroundColor: {
             type: String,
             default: '#fff'
@@ -58,6 +77,10 @@ export default {
         width: {
             type: String,
             required: true
+        },
+        testPercentage: {
+            type: Number,
+            default: 0,
         }
     },
 
