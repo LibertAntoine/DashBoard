@@ -41,12 +41,12 @@ export const JulianDay = (day, month, year) => {
         month += 12;
     }
     
-    const A = year / 100
-    const B = A / 4
-    const C = 2-A + B
-    const E = 365.25 * (year + 4716)
-    const F = 30.6001 * (month + 1)
-    return C+day+E+F-1524.5;
+    const A = year / 100;
+    const B = A / 4;
+    const C = 2-A + B;
+    const E = 365.25 * (year + 4716);
+    const F = 30.6001 * (month + 1);
+    return C + day + E  +F - 1524.5;
 }
 
 export const modifiedJulianDay = (julianDay) => julianDay - 2400000.5;
@@ -56,4 +56,3 @@ export const daySinceNewMoon = (julianDay) => julianDay - JulianDay(24, 3, 2020)
 
 // return percentage between two new moon
 export const moonPhase = (julianDay) => (daySinceNewMoon(julianDay) % 29.53) / 29.53;
-
