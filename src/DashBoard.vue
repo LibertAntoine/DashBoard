@@ -1,7 +1,9 @@
 <template>
   <div id="app">
-    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
+    <WeatherMap :lat="this.location.lat" :long="this.location.long"/>
+    
     <p> ton ip est : {{ this.clientIp }} </p>
+    <p> ta localisation est : {{ this.location }} </p>
     <DropDown 
       :options='citiesList' 
       :placeholderText='"select a city"' 
@@ -31,7 +33,8 @@
     <LineChart id='LineChart' class="graph"
       :labels="this.labels" 
       :datasets="
-        [{
+        [
+        {
           label: this.city + ' Temperature (F°)',
           backgroundColor: '#1B157C',
           data: this.datasets
@@ -47,11 +50,14 @@
       }"
       />
 
+    
+
   </div>
 </template>
 
 <script>
 import DataApi from './services/Api/Data'
+
 import { dayTimeToDate } from './services/helpers/conversion'
 
 import BarChart from './components/BarChart'
@@ -59,6 +65,8 @@ import LineChart from './components/LineChart'
 import DropDown from './components/DropDown'
 import SunDisplay from './components/SunDisplay'
 import MoonPhase from './components/MoonPhase'
+import WeatherMap from './components/WeatherMap'
+
 import { Plotly } from 'vue-plotly'
 
 export default {
@@ -69,7 +77,8 @@ export default {
     DropDown,
     Plotly,
     SunDisplay,
-    MoonPhase
+    MoonPhase,
+    WeatherMap
   },
   data () {
     return {
@@ -121,7 +130,6 @@ export default {
 
 .graph {
   display: inline-block;
-  padding: 40px;
   width: 500px;
 }
 
