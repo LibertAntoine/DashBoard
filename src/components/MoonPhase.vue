@@ -13,10 +13,11 @@
     </div>
 </template>
 
-
 <script>
 
 import { bound, JulianDay, moonPhase } from '../services/helpers/math'
+
+import easingFunctions from '../services/helpers/easingFunctions'
 
 export default {
     
@@ -42,11 +43,11 @@ export default {
             return this.percentage > 0.5
         },
         waningRotate() {
-            return this.waning ? 180 : 0
+            return this.waning ? 0 : 180
         },
         sunIntensity() {
             const twice = this.percentage * 2;
-            return twice < 1 ? twice : 2 - twice;
+            return easingFunctions.inOutQuart(twice < 1 ? twice : 2 - twice);
         },
         // percentage Between Two New Moon
         percentage() {
@@ -128,7 +129,7 @@ export default {
         padding: 0;
         margin: 0;
         /* for help debug  */
-        border: thin dotted darkgrey;
+        /* border: thin dotted darkgrey; */
     }
 
 </style>
