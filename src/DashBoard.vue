@@ -11,35 +11,30 @@
       <div class="ui four column divided grid">
         <div class="row">
 
-      <WeatherMap class="column" :embedURL='embedURL' :height='600' :width='500' />
+      <WeatherMap class="column" :embedURL='embedURL' title='Localisation Map' :height='600' :width='500' />
 
-
-        <div id='graph' class="column">
-          <Plotly id="tempGraph" class="graph column"
-          :data="[{ x: this.labelsMinTemp, y: this.datasetsMinTemp, type: 'bar', name: 'Min'},
+      <GraphBar class="column" 
+        :datasets="[
+            { x: this.labelsMinTemp, y: this.datasetsMinTemp, type: 'bar', name: 'Min'},
             { x: this.labelsMaxTemp, y: this.datasetsMaxTemp, type: 'bar', name: 'Max'}
-          ]"
-          :layout="{ 
-            title: 'Temperature (C°)',
-            yaxis: {range: [Math.min(...this.datasetsMinTemp) - 5, Math.max(...this.datasetsMaxTemp)]},
-            barmode: 'group',
-            width:'500',
-            height:'500'
-          }"
-          />
+        ]"
+        :range='[Math.min(...this.datasetsMinTemp) - 5, Math.max(...this.datasetsMaxTemp)]'
+        title='Temperature (°C)'
+        :height='300' 
+        :width='400' />
+
     <Modal ref='testModal'
       :title= '"test titre"'
       :overlayColor= '"#000000"'
-      :overlayOpacity= 0.4
-    > 
+      :overlayOpacity= '0.4' 
+      />
       <p>test du component Modal</p>
 
-    </Modal>
           <LocalInfo :forecast="forecast" :address="address"/>
         </div>
         </div> 
        </div>
-    </div>
+
 
     <MapModal ref='mapModal'
       :overlayColor= "'#0000ff'"
@@ -77,18 +72,18 @@ import Modal from './components/Modal'
 import MapModal from './components/MapModal'
 import WeatherMap from './components/WeatherMap'
 import LocalInfo from './components/LocalInfo'
-import { Plotly } from 'vue-plotly'
+import GraphBar from './components/GraphBar'
 
 export default {
   name: 'App',
   components: {
-    Plotly,
     SunDisplay,
     MoonPhase,
     WeatherMap,
     LocalInfo,
     Modal,
-    MapModal
+    MapModal,
+    GraphBar
   },
   data () {
     return {
