@@ -2,6 +2,7 @@
 	<div class="line-chart-container">
 		<svg ref="svg" width="600" height="500">
 		</svg>
+		<input type="checkbox" v-model="line">
 	</div>
 </template>
 
@@ -14,7 +15,7 @@ export default {
 	props: { 
 		data: {
 			type: Array,
-			default: () => [10, 7, 12, 21, 20, 22]
+			default: () => [10, 7, 12, 21, 20, 22, 24, 2, 8]
 		}
 	},
 	data() {
@@ -25,25 +26,43 @@ export default {
 			path: null,
 			dots: null,
 			circles: {},
-			dotsHover: null,
-			range: []
+			range: [],
+			drawLine: false
+		}
+	},
+	computed: {
+		line: {
+			set(value) {
+				this.drawLine = value
+			},
+			get() {
+				return this.drawLine
+			}
 		}
 	},
 	watch: {
 		data(newData, oldData) {
 			this.tweenData(newData, oldData);
+		},
+		drawLine(newData, oldData) {
+			if (oldData === false)
+				this.buildPath();
+			else 
+				this.removePath()
 		}
 	},
 	async mounted() {
 		this.buildSVG();
-		//this.buildDots();
 		await this.showDotsgradually()
 		this.tweenDots()
-			.onComplete(this.buildLines)
+			.onComplete(() => {
+				this.buildAxis();
+				this.buildLines();
+			})
 	},
 	methods: {
 		buildLines() {
-			const lines = d3.range(0, 30, 5);
+			const lines = d3.range(5, 30, 5);
 
 			const size = this.scaleX(this.data.length - 1) - this.scaleX(0);
 
@@ -93,22 +112,6 @@ export default {
 				.onUpdate(this.buildDots)
 				.start()
 		},
-		tweenData(newData, oldData) {
-			function animate(time) {
-				requestAnimationFrame(animate);
-				TWEEN.update(time);
-			}
-			requestAnimationFrame(animate);
-			new TWEEN.Tween(oldData)
-				.easing(TWEEN.Easing.Quadratic.Out)
-				.to(newData, 1000)
-				.onUpdate(() => {
-					this.animatedData = oldData;
-					this.update();
-				})
-				.start();
-		},
-
 		showDotsgradually() {
 			return new Promise(resolve => {
 				let item = 0;
@@ -125,27 +128,51 @@ export default {
 				}, 1500)
 			})
 		},
-		createPath() {
-			return d3.line().x((d, i) => this.scaleX(i)).y(d => this.scaleY(d))(this.animatedData);
-		},
-		buildDots() {
-			this.dots = d3.select(this.$refs.svg).selectAll('g.dot')
-				.data(this.animatedData);
+		buildPath() {
+			const path = d3.line().x((d, i) => this.scaleX(i)).y(d => this.scaleY(d))(this.animatedData);
+			this.path.attr('d', path);
+			const pathLength = this.path.node().getTotalLength();
+			this.path.attr('stroke-dasharray', `${pathLength} ${pathLength}`)
+				.attr('stroke-dashoffset', pathLength)
+				.transition().duration(1000).ease(d3.easeSinOut)
+				.attr('stroke-dashoffset', 0)
 
-			const y_axis = d3.axisLeft()
-				.scale(this.scaleY)
+			const area = d3.area().x((d, i) => this.scaleX(i)).y0(d => this.scaleY(d)).y1(this.scaleY(0))(this.animatedData);
+			d3.select(this.$refs.svg).selectAll('path.area').data([null])
+				.enter()
+				.append('path')
+				.attr('class', "area")
+				.attr('d', area)
+				.attr('opacity', 0)
+				.transition().duration(1000).ease(d3.easePolyIn)
+				.attr('opacity', 1)
+			
+		},
+		removePath() {
+			this.path.attr('d', "");
+		},
+		buildAxis() {
+			const scale = d3.scalePoint().domain(d3.range(5, 26, 5)).range([500 - 500/6, 500/6])
+
+			const y_axis = d3.axisLeft(scale)
 				.tickPadding(-6)
 				.ticks(5)
+				.tickFormat((d) => d+"°")
 
 			const y_axisEl = d3.select(this.$refs.svg).selectAll('g.y_axis').data([null])
 			y_axisEl.enter().append('g')
 				.attr('class', "y_axis")
 				.attr('style', "font-size: 1em")
 				.merge(y_axisEl)
-				.attr('transform', "translate(15, 0)")
-				.call(y_axis).call(g => g.select('.domain').remove())
-				.call(g => g.select('line').remove())
+				.attr('transform', "translate(35, 0)")
+				.call(y_axis)
+				.call(g => g.select('.domain').remove())
+				.call(g => g.selectAll('line').remove())
 			
+		},
+		buildDots() {
+			this.dots = d3.select(this.$refs.svg).selectAll('g.dot')
+				.data(this.animatedData);
 
 			// NOTE dots that are no longer here
 			this.dots.exit().remove();
@@ -154,7 +181,8 @@ export default {
 			const g = this.dots.enter()
 					.append('g')
 					.classed('dot', true)
-					.on('mouseover', this.logHover)
+					.on('mouseover', this.dotMouseover)
+					.on('mouseleave', this.dotMouseleave)
 
 			// NOTE first dot (visible dot)
 			g.append('circle')
@@ -176,11 +204,57 @@ export default {
 					return `translate(${this.scaleX(i)}, ${this.scaleY(d)})`
 				})
 		},
-		logHover(event) {
-			console.log(event)
+		dotMouseover(d, i, nodes) {
+			console.log('hover')
+			d3.select(nodes[i])
+				.selectAll('text').data([null]).enter()
+				.append('text')
+				.text(this.data[i] + "°C")
+				.attr('text-anchor', "middle")
+				.attr('opacity', 0)
+				.attr('pointer-event', "none")
+				.transition().duration(500).ease(d3.easePolyOut)
+				.attr('opacity', 1)
+				.attr('transform', "translate(0, -20)")
+		},
+		dotMouseleave(d, i, nodes) {
+			d3.select(nodes[i])
+				.select('text')
+				.attr('opacity', 1)
+				.transition().duration(500).ease(d3.easePolyOut)
+				.attr('opacity', 0)
+				.attr('transform', "translate(0, -10)")
+				.remove()
 		},
 		buildSVG() {
-			this.scaleX = d3.scaleBand().range([30, 590]).domain(this.data.map((el, i) => i))
+			var defs = d3.select(this.$refs.svg).append("defs");
+
+			var gradient = defs.append("linearGradient")
+				.attr("id", "svgGradient")
+				.attr("gradientUnits", "userSpaceOnUse")
+				.attr("x1", "0%")
+				.attr("x2", "0%")
+				.attr("y1", "0%")
+				.attr("y2", "100%");
+
+			gradient.append("stop")
+				.attr('class', 'start')
+				.attr("offset", "0%")
+				.attr("stop-color", "#c45454")
+				.attr("stop-opacity", 0.7);
+
+			gradient.append("stop")
+				.attr("offset", "80%")
+				.attr("stop-color", "#0083c4")
+				.attr("stop-opacity", 0.1);
+
+			gradient.append("stop")
+				.attr('class', 'end')
+				.attr("offset", "100%")
+				.attr("stop-color", "#0083c4")
+				.attr("stop-opacity", 0);
+
+			this.scaleX = d3.scaleBand().range([50, 590]).domain(this.data.map((el, i) => i))
 			this.rangeY = d3.scaleLinear().range([500, 0]);
 			this.scaleY = this.rangeY.domain([0, 30]);
 			this.path = d3.select(this.$refs.svg)
@@ -201,10 +275,17 @@ export default {
 
 <style lang="less">
 svg {
+	/*background: lightgray;*/
+
 	path {
 		fill: none;
-		stroke-width: 2px;
-		stroke: lightcoral;
+		stroke-width: 4px;
+		stroke: lightseagreen;
+
+		&.area {
+			fill: url(#svgGradient);
+			stroke: none;
+		}
 	}
 
 	g.dot {
