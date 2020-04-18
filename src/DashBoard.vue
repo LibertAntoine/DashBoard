@@ -37,14 +37,38 @@
         :height='300' 
         :width='400' />
 
+      <InfoCard 
+        :title='this.forecast.currently.summary'
+        :datasets='[
+          {label:"Temperature", value:(((forecast.currently.temperature) - 32) * 5/9).toFixed(1) + " °C"}
+        ]'
+        :height='170' 
+        :width='250' />
+
+        <InfoCard 
+        title="Details"
+        :datasets='[
+          {label:"Humidity", value:(this.forecast.currently.humidity * 100).toFixed(1) + " %"},
+          {label:"Windspeed", value:(this.forecast.currently.windSpeed * 1,852) + " km/h"}
+        ]'
+        :height='230' 
+        :width='320' />
+
+        <InfoCard 
+        :title='"Weather today at :" + this.address'
+        :height='130' 
+        :width='400' />
+
+
+
+
     <Modal ref='testModal'
       :title= '"test titre"'
       :overlayColor= '"#000000"'
       :overlayOpacity= '0.4' 
       />
-      <p>test du component Modal</p>
 
-          <LocalInfo :forecast="forecast" :address="address"/>
+
         </div>
         </div> 
        </div>
@@ -85,9 +109,9 @@ import MoonPhase from './components/MoonPhase'
 import Modal from './components/Modal'
 import MapModal from './components/MapModal'
 import WeatherMap from './components/WeatherMap'
-import LocalInfo from './components/LocalInfo'
 import SuiModal from './components/SuiModal'
 import GraphBar from './components/GraphBar'
+import InfoCard from './components/InfoCard'
 
 export default {
   name: 'App',
@@ -95,11 +119,11 @@ export default {
     SunDisplay,
     MoonPhase,
     WeatherMap,
-    LocalInfo,
     Modal,
     MapModal,
     GraphBar,
-    SuiModal
+    SuiModal,
+    InfoCard
   },
   data () {
     return {
@@ -120,7 +144,7 @@ export default {
       datasetsMaxTemp : []
     }
   },
-  
+
   async created () {
     this.clientIp = await DataApi.getMyIp();
     this.location = await DataApi.getLocation();
