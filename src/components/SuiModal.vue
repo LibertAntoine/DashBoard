@@ -1,6 +1,5 @@
 <template>
   <div>
-    <sui-button @click.native='toggle'>Show Modal</sui-button>
     <sui-modal v-model='open'>
       <sui-modal-header> {{ title }} </sui-modal-header>
       <sui-modal-content image>

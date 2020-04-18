@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <sui-button @click.prevent='$refs.dialogueModal.toggle'>Show Modal</sui-button>
     <SuiModal :title='"test modal with sementic-ui"' ref='dialogueModal'> 
       <sui-modal-description>
         <sui-image floated="left" size="medium" src="logoProfile.png" />
