@@ -1,60 +1,49 @@
 <template>
   <div id="app">
-    <sui-button @click.prevent='$refs.dialogueModal.toggle'>Show Modal</sui-button>
+    
     <SuiModal :title='"test modal with sementic-ui"' ref='dialogueModal'> 
       <sui-modal-description>
         <sui-image floated="left" size="medium" src="logoProfile.png" />
-          <sui-header>Default Profile Image</sui-header>
-          <p>
-            We've found the following gravatar image associated with your e-mail
-            address.
-          </p>
-          <p>Is it okay to use this photo?</p>
-          <slot></slot>
-        </sui-modal-description>
-        <template v-slot:actions>
-          <sui-button positive @click.prevent='$refs.dialogueModal.toggle'> CLOSE </sui-button>
-        </template>
+        <sui-header>Default Profile Image</sui-header>
+        <p> We've found the following gravatar image associated with your e-mail address.</p>
+        <p>Is it okay to use this photo?</p>
+      </sui-modal-description>
+
+      <template v-slot:actions>
+        <sui-button positive @click.prevent='$refs.dialogueModal.toggle'> CLOSE </sui-button>
+      </template>
     </SuiModal>
+    <sui-button @click.prevent='$refs.dialogueModal.toggle'>Show Modal</sui-button>
     <div id="locationInfo">
-          <div id="citySearch" class="ui input">
-            <input id="cityInput" v-model="localisation" type="text" placeholder="Enter Location">
+      <div id="citySearch" class="ui input">
+            <input id="cityInput" v-model="localisation" type="text" placeholder="Enter Location" />
             <button @click="updateLocation" class="ui primary basic button" type="button">Search</button>
-          </div> 
+      </div> 
 
       <div class="ui four column divided grid">
         <div class="row">
+          <WeatherMap class="column" :embedURL='embedURL' title='Localisation Map' :height='600' :width='500' />
 
-      <WeatherMap class="column" :embedURL='embedURL' title='Localisation Map' :height='600' :width='500' />
-
-      <GraphBar class="column" 
-        :datasets="[
-            { x: this.labelsMinTemp, y: this.datasetsMinTemp, type: 'bar', name: 'Min'},
-            { x: this.labelsMaxTemp, y: this.datasetsMaxTemp, type: 'bar', name: 'Max'}
-        ]"
-        :range='[Math.min(...this.datasetsMinTemp) - 5, Math.max(...this.datasetsMaxTemp)]'
-        title='Temperature (°C)'
-        :height='300' 
-        :width='400' />
-
-    <Modal ref='testModal'
-      :title= '"test titre"'
-      :overlayColor= '"#000000"'
-      :overlayOpacity= '0.4' 
-      />
-      <p>test du component Modal</p>
+          <GraphBar class="column" 
+            :datasets="[
+                { x: this.labelsMinTemp, y: this.datasetsMinTemp, type: 'bar', name: 'Min'},
+                { x: this.labelsMaxTemp, y: this.datasetsMaxTemp, type: 'bar', name: 'Max'}
+            ]"
+            :range='[Math.min(...this.datasetsMinTemp) - 5, Math.max(...this.datasetsMaxTemp)]'
+            title='Temperature (°C)'
+            :height='300' 
+            :width='400' />
 
           <LocalInfo :forecast="forecast" :address="address"/>
         </div>
-        </div> 
-       </div>
-
-
-    <MapModal ref='mapModal'
-      :overlayColor= "'#0000ff'"
-    ></MapModal>
-    <button @click.prevent='$refs.testModal.open'>open test modal</button>
-    <button @click.prevent='$refs.mapModal.open'>open google map modal</button>
+      </div> 
+    </div>
+    <SuiModal :title='"test titre"' ref='testModal'> 
+    <p>test du component Modal</p>
+    </SuiModal>
+    <MapModal ref='mapModal'/>
+    <sui-button @click.prevent='$refs.testModal.toggle'>Show Modal</sui-button>
+    <sui-button @click.prevent='$refs.mapModal.toggle'>Show mapModal</sui-button>
     <SunDisplay
       width= '300px'
       :sunriseHours='locationInformation.sunrise || "00:00"'
@@ -82,7 +71,6 @@ import { dayTimeToDate } from './services/helpers/conversion'
 
 import SunDisplay from './components/SunDisplay'
 import MoonPhase from './components/MoonPhase'
-import Modal from './components/Modal'
 import MapModal from './components/MapModal'
 import WeatherMap from './components/WeatherMap'
 import LocalInfo from './components/LocalInfo'
@@ -96,7 +84,6 @@ export default {
     MoonPhase,
     WeatherMap,
     LocalInfo,
-    Modal,
     MapModal,
     GraphBar,
     SuiModal
