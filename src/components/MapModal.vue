@@ -1,17 +1,7 @@
 <template>
-    <Modal 
-        ref='modal'
-        :title='"Location Selection"'
-        :overlayColor='overlayColor'
-        :overlayOpacity='overlayOpacity'
-        :backgroundColor='backgroundColor'
-        :clickToClose='clickToClose'
-        :delay='delay'
-    >
+    <SuiModal ref='modal' :title='"Location Selection"'>
 
-        <div class='mapContainer' 
-            :style="{'height': this.height, 'width': this.width}"
-        >
+        <div class='mapContainer' :style="{'height': this.height}">
             <div class="info" style='height: 15%'>
                 <span>Center: {{ center }}</span>
                 <span>Zoom: {{ zoom }}</span>
@@ -26,17 +16,19 @@
                 @update:bounds='boundsUpdated'
             >
                 <LTileLayer :url='url' />
-
                 <LCircleMarker :lat-lng='selectedLocation' :radius='circleMakerRadius' color='red' />
                 <!-- <l-marker :lat-lng='selectedLocation' :icon='markerIcon'></l-marker> -->
             </LMap>
         </div>
-    </Modal>
+        <template v-slot:actions>
+            <sui-button positive @click.prevent='$refs.modal.toggle'> CLOSE </sui-button>
+        </template>
+    </SuiModal>
 </template>
 
 <script>
 import DataApi from '../services/Api/Data'
-import Modal from './Modal'
+import SuiModal from './SuiModal'
 
 import { latLng, icon } from "leaflet";
 import { LMap, LTileLayer, LCircleMarker } from 'vue2-leaflet';
@@ -45,7 +37,7 @@ export default {
     
     name: 'mapModal',
     components: {
-        Modal,
+        SuiModal,
         LMap, 
         LTileLayer,
         LCircleMarker
@@ -112,13 +104,8 @@ export default {
         boundsUpdated (bounds) {
             this.bounds = bounds;
         },
-        open () {
-            this.$emit('open');
-            this.$refs.modal.open();
-        },
-        close () {
-            this.$emit('close');
-            this.$refs.modal.close();
+        toggle () {
+            this.$refs.modal.toggle();
         },
 
         goToSelectedLocation () {
@@ -143,17 +130,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-.mapContainer {
-
-}
-
-.map {
-
-}
-
-.info {
-    
-}
 
 </style>
