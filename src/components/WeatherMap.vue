@@ -1,5 +1,6 @@
 <template>
-  <div id="WeatherMap" :style="'width:' + (parseInt(width) + 10) + 'px; height:' + (parseInt(height) + 10) + 'px;'">
+  <div id="weatherMap" :style="'width:' + (parseInt(width) + 10) + 'px; height:' + (parseInt(height) + 58) + 'px;'">
+      <h2 id="mapTitle">{{ title }}</h2>
       <iframe
           id="map-embed-iframe"
           frameborder="0"
@@ -14,7 +15,8 @@
 export default {
   name: 'WeatherMap',
   props: {
-        embedURL: {type: String, default: '', require:true},
+        embedURL: {type: String, require: true},
+        title: {type: String, default: 'title'},
         height: {type: Number, default: 500},
         width: {type: Number, default: 500}
   }
@@ -22,10 +24,16 @@ export default {
 </script>
 
 <style>
-#WeatherMap {
+#weatherMap {
   background-color : white;
   padding : 5px;
   border-radius: .28571429rem;
   box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
+  margin: 5px;
+}
+
+#mapTitle {
+  margin-left : 10px;
+  margin-top : 3px;
 }
 </style>
