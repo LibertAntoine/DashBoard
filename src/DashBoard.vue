@@ -1,12 +1,33 @@
 <template>
+
+
   <div id="app">
-    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-    <p> ton ip est : {{ this.clientIp }} </p>
-    <DropDown 
-      :options='citiesList' 
-      :placeholderText='"select a city"' 
-      @update='(city) => this.city = city'
-    />
+    <div id="locationInfo">
+          <div id="citySearch" class="ui input">
+            <input id="cityInput" v-model="localisation" type="text" placeholder="Enter Location">
+            <button @click="updateLocation" class="ui primary basic button" type="button">Search</button>
+          </div> 
+
+      <div class="ui four column divided grid">
+        <div class="row">
+
+        <div id='map' class="column">
+          <WeatherMap :embedURL="this.embedURL"/>
+        </div>
+
+        <div id='graph' class="column">
+          <Plotly id="tempGraph" class="graph column"
+          :data="[{ x: this.labelsMinTemp, y: this.datasetsMinTemp, type: 'bar', name: 'Min'},
+            { x: this.labelsMaxTemp, y: this.datasetsMaxTemp, type: 'bar', name: 'Max'}
+          ]"
+          :layout="{ 
+            title: 'Temperature (C°)',
+            yaxis: {range: [Math.min(...this.datasetsMinTemp) - 5, Math.max(...this.datasetsMaxTemp)]},
+            barmode: 'group',
+            width:'500',
+            height:'500'
+          }"
+          />
     <Modal ref='testModal'
       :title= '"test titre"'
       :overlayColor= '"#000000"'
@@ -19,6 +40,11 @@
       />
 
     </Modal>
+          <LocalInfo :forecast="forecast" :address="address"/>
+        </div>
+        </div> 
+       </div>
+    </div>
 
     <MapModal ref='mapModal'
       :overlayColor= "'#0000ff'"
@@ -34,78 +60,58 @@
       :testPercentage='MoonPhaseTestPercentage'
       width= '200px'
     />
+
     <input type="range" min="0" max="100" value="25" class="slider" id="myRange" @input="updatePercentage">
     <br/>
-    <BarChart id='BarChart' class="graph"
-      :labels="this.labels" 
-      :datasets="
-        [{
-          label: this.city + ' Temperature (F°)',
-          backgroundColor: '#f87979',
-          data: this.datasets
-        }]
-      "
-    />
-    <LineChart id='LineChart' class="graph"
-      :labels="this.labels" 
-      :datasets="
-        [{
-          label: this.city + ' Temperature (F°)',
-          backgroundColor: '#1B157C',
-          data: this.datasets
-        }]
-      "
-    />
 
-    <Plotly class="graph"
-      :data="[{ x: this.labels, y: this.datasets, type: 'bar' }]"
-      :layout="{ 
-        title: this.city + ' Temperature (F°)',
-        yaxis: {range: [Math.min(...this.datasets), Math.max(...this.datasets)]}
-      }"
-      />
+    <p> ton ip est : {{ this.clientIp }} </p>
+    <p> ta localisation est : {{ this.location }} </p>
 
   </div>
 </template>
 
 <script>
 import DataApi from './services/Api/Data'
+import DarkSkyData from '@/services/Api/DarkSkyData';
+
 import { dayTimeToDate } from './services/helpers/conversion'
 
-import BarChart from './components/BarChart'
-import LineChart from './components/LineChart'
-import DropDown from './components/DropDown'
 import SunDisplay from './components/SunDisplay'
 import MoonPhase from './components/MoonPhase'
 import Modal from './components/Modal'
 import MapModal from './components/MapModal'
+import WeatherMap from './components/WeatherMap'
+import LocalInfo from './components/LocalInfo'
 import { Plotly } from 'vue-plotly'
 
 export default {
   name: 'App',
   components: {
-    BarChart,
-    LineChart,
-    DropDown,
     Plotly,
     SunDisplay,
     MoonPhase,
+    WeatherMap,
+    LocalInfo,
     Modal,
     MapModal
   },
   data () {
     return {
-      citiesList: ['London', 'Paris', 'Madrid'],
-      labels: [],
-      datasets: [],
-      city: 'London',
       clientIp: '',
       locationInformation: {
         sunset: '00:00',
         sunrise: '00:00'
       },
       location: {},
-      MoonPhaseTestPercentage: 0
+      MoonPhaseTestPercentage: 0,
+      address : '',
+      forecast: null,
+      embedURL: '',
+      localisation : '',
+      labelsMinTemp : [],
+      datasetsMinTemp : [],
+      labelsMaxTemp : [],
+      datasetsMaxTemp : []
     }
   },
   
@@ -118,6 +124,7 @@ export default {
     if (locationInformation) {
       this.locationInformation = locationInformation;
     } 
+    this.loadWeather(this.location.lat || '40.8587', this.location.long || '10.3429');
   },
 
   watch: { // define watcher on our variable city and update the data if it changes
@@ -127,16 +134,27 @@ export default {
     }
   },
   methods: {
-      async updateData (city) {
-        console.log('update data for ' + city)
-        const dataAPI = await DataApi.getCity16days(city); // use local data instead
-        // const dataAPI = await DataApi.getLocalCity16days(this.city).data; // get data
-        this.labels = dataAPI.data.list.map( day => dayTimeToDate(day.dt))
-        this.datasets = dataAPI.data.list.map( day => parseInt(day.main.temp))
-      },
       updatePercentage(event) {
         this.MoonPhaseTestPercentage = parseInt(event.target.value) / 100;
-      }
+      },
+      // DarkSky
+      async loadWeather(lat, lng) {
+        this.embedURL = DarkSkyData.getEmbedURL(lat, lng)
+        const result = await DarkSkyData.getAddress(lat, lng)
+        this.address = [result.name, result.street].join(' ')
+        this.forecast = await DarkSkyData.getForecast(lat, lng)
+        console.log(this.forecast)
+        this.labelsMinTemp = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0])
+        this.datasetsMinTemp = this.forecast.daily.data.map( day => parseInt(day.temperatureMin - 32) * 5/9)
+        this.labelsMaxTemp = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0])
+        this.datasetsMaxTemp = this.forecast.daily.data.map( day => parseInt(day.temperatureMax - 32) * 5/9)
+      
+       },
+      async updateLocation() {
+        const result = await DarkSkyData.getCoordinates(this.localisation)
+          if(result.error) this.loadWeather(this.location.lat, this.location.long);
+          else this.loadWeather(result.latitude, result.longitude);
+      },
   }
 }
 </script>
@@ -144,12 +162,27 @@ export default {
 <style>
 #app {
   padding: 30px;
+  background-color : #373635;
+}
+#map {
+  width : 520px;
+}
+#graph {
+  width: 520px;
 }
 
 .graph {
   display: inline-block;
-  padding: 40px;
   width: 500px;
+}
+#cityInput {
+  margin-right : 3px;
+}
+#citySearch {
+  margin-bottom : 10px;
+}
+#tempGraph {
+  border-radius : 30px;
 }
 
 </style>
