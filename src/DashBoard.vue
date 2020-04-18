@@ -1,7 +1,20 @@
 <template>
-
-
   <div id="app">
+    <SuiModal :title='"test modal with sementic-ui"' ref='dialogueModal'> 
+      <sui-modal-description>
+        <sui-image floated="left" size="medium" src="logoProfile.png" />
+          <sui-header>Default Profile Image</sui-header>
+          <p>
+            We've found the following gravatar image associated with your e-mail
+            address.
+          </p>
+          <p>Is it okay to use this photo?</p>
+          <slot></slot>
+        </sui-modal-description>
+        <template v-slot:actions>
+          <sui-button positive @click.prevent='$refs.dialogueModal.toggle'> CLOSE </sui-button>
+        </template>
+    </SuiModal>
     <div id="locationInfo">
           <div id="citySearch" class="ui input">
             <input id="cityInput" v-model="localisation" type="text" placeholder="Enter Location">
@@ -77,6 +90,7 @@ import Modal from './components/Modal'
 import MapModal from './components/MapModal'
 import WeatherMap from './components/WeatherMap'
 import LocalInfo from './components/LocalInfo'
+import SuiModal from './components/SuiModal'
 import { Plotly } from 'vue-plotly'
 
 export default {
@@ -88,7 +102,8 @@ export default {
     WeatherMap,
     LocalInfo,
     Modal,
-    MapModal
+    MapModal,
+    SuiModal
   },
   data () {
     return {
@@ -138,7 +153,6 @@ export default {
         const result = await DarkSkyData.getAddress(lat, lng)
         this.address = [result.name, result.street].join(' ')
         this.forecast = await DarkSkyData.getForecast(lat, lng)
-        console.log(this.forecast)
         this.labelsMinTemp = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0])
         this.datasetsMinTemp = this.forecast.daily.data.map( day => parseInt(day.temperatureMin - 32) * 5/9)
         this.labelsMaxTemp = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0])
