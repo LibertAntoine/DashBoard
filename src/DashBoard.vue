@@ -34,10 +34,6 @@
       :overlayOpacity= 0.4
     > 
       <p>test du component Modal</p>
-      <DropDown 
-        :options='[1, 2, 3, 4, 5]' 
-        :placeholderText='"select a number"'
-      />
 
     </Modal>
           <LocalInfo :forecast="forecast" :address="address"/>
@@ -124,7 +120,7 @@ export default {
     if (locationInformation) {
       this.locationInformation = locationInformation;
     } 
-    this.loadWeather(this.location.lat || '40.8587', this.location.long || '10.3429');
+    this.loadWeather(this.location.latitude || '40.8587', this.location.longitude || '10.3429');
   },
 
   watch: { // define watcher on our variable city and update the data if it changes
