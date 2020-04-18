@@ -3,8 +3,7 @@
     <h2 id="graphBarTitle">{{ title }}</h2>
     <Plotly id="graph"
     :data="datasets"
-    :layout="{ 
-        title: none,
+    :layout="{
         yaxis: {range: range},
         barmode: 'group',
         width: width,
