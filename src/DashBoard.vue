@@ -11,9 +11,8 @@
       <div class="ui four column divided grid">
         <div class="row">
 
-        <div id='map' class="column">
-          <WeatherMap :embedURL="this.embedURL"/>
-        </div>
+      <WeatherMap class="column" :embedURL='embedURL' :height='600' :width='500' />
+
 
         <div id='graph' class="column">
           <Plotly id="tempGraph" class="graph column"
@@ -159,9 +158,6 @@ export default {
 #app {
   padding: 30px;
   background-color : #373635;
-}
-#map {
-  width : 520px;
 }
 #graph {
   width: 520px;
