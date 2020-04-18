@@ -124,7 +124,6 @@ export default {
     SunDisplay,
     MoonPhase,
     WeatherMap,
-    Modal,
     MapModal,
     GraphBar,
     SuiModal,
