@@ -36,15 +36,6 @@
         :title='"Weather today at :" + this.address'
         :height='130' 
         :width='400' />
-
-
-    <Modal ref='testModal'
-      :title= '"test titre"'
-      :overlayColor= '"#000000"'
-      :overlayOpacity= '0.4' 
-      />
-
-
     </div>
     <SuiModal :title='"test titre"' ref='testModal'> 
     <p>test du component Modal</p>
