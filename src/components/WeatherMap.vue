@@ -1,5 +1,5 @@
 <template>
-  <div id="weatherMap" :style="'width:' + (parseInt(width) + 10) + 'px; height:' + (parseInt(height) + 58) + 'px;'">
+  <div id="weatherMap" :style="'width:' + (parseInt(width) + 10) + 'px !important; height:' + (parseInt(height) + 58) + 'px;'">
       <h2 id="mapTitle">{{ title }}</h2>
       <iframe
           id="map-embed-iframe"

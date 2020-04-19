@@ -1,38 +1,9 @@
 <template>
   <div id="app">
-    
-    <SuiModal :title='"test modal with sementic-ui"' ref='dialogueModal'> 
-      <sui-modal-description>
-        <sui-image floated="left" size="medium" src="logoProfile.png" />
-        <sui-header>Default Profile Image</sui-header>
-        <p> We've found the following gravatar image associated with your e-mail address.</p>
-        <p>Is it okay to use this photo?</p>
-      </sui-modal-description>
+    <NavBar :update='updateLocation'/>
 
-      <template v-slot:actions>
-        <sui-button positive @click.prevent='$refs.dialogueModal.toggle'> CLOSE </sui-button>
-      </template>
-    </SuiModal>
-    <sui-button @click.prevent='$refs.dialogueModal.toggle'>Show Modal</sui-button>
-    <div id="locationInfo">
-      <div id="citySearch" class="ui input">
-            <input id="cityInput" v-model="localisation" type="text" placeholder="Enter Location" />
-            <button @click="updateLocation" class="ui primary basic button" type="button">Search</button>
-      </div> 
-
-      <div class="ui four column divided grid">
-        <div class="row">
-          <WeatherMap class="column" :embedURL='embedURL' title='Localisation Map' :height='600' :width='500' />
-
-          <GraphBar class="column" 
-            :datasets="[
-                { x: this.labelsMinTemp, y: this.datasetsMinTemp, type: 'bar', name: 'Min'},
-                { x: this.labelsMaxTemp, y: this.datasetsMaxTemp, type: 'bar', name: 'Max'}
-            ]"
-            :range='[Math.min(...this.datasetsMinTemp) - 5, Math.max(...this.datasetsMaxTemp)]'
-            title='Temperature (°C)'
-            :height='300' 
-            :width='400' />
+    <div class="ui stackable four column grid centered">
+      <WeatherMap class="four wide column" :embedURL='embedURL' title='Localisation Map' :height='600' :width='500' />
 
       <GraphBar class="column" 
         :datasets="[
@@ -44,29 +15,27 @@
         :height='300' 
         :width='400' />
 
-      <InfoCard 
-        :title='this.forecast.currently.summary'
+      <InfoCard class="column" 
+        :title='currentSummary'
         :datasets='[
-          {label:"Temperature", value:(((forecast.currently.temperature) - 32) * 5/9).toFixed(1) + " °C"}
+          {label:"Temperature", value: currentTemperature + " °C"}
         ]'
         :height='170' 
         :width='250' />
 
-        <InfoCard 
+        <InfoCard class="column" 
         title="Details"
         :datasets='[
-          {label:"Humidity", value:(this.forecast.currently.humidity * 100).toFixed(1) + " %"},
-          {label:"Windspeed", value:(this.forecast.currently.windSpeed * 1,852) + " km/h"}
+          {label:"Humidity", value: currentHumidity + " %"},
+          {label:"Windspeed", value: currentWindSpeed + " km/h"}
         ]'
         :height='230' 
         :width='320' />
 
-        <InfoCard 
+        <InfoCard class="column" 
         :title='"Weather today at :" + this.address'
         :height='130' 
         :width='400' />
-
-
 
 
     <Modal ref='testModal'
@@ -76,8 +45,6 @@
       />
 
 
-        </div>
-      </div> 
     </div>
     <SuiModal :title='"test titre"' ref='testModal'> 
     <p>test du component Modal</p>
@@ -98,9 +65,6 @@
     <input type="range" min="0" max="100" value="25" class="slider" id="myRange" @input="updatePercentage">
     <br/>
 
-    <p> ton ip est : {{ this.clientIp }} </p>
-    <p> ta localisation est : {{ this.location }} </p>
-
   </div>
 </template>
 
@@ -117,6 +81,7 @@ import WeatherMap from './components/WeatherMap'
 import SuiModal from './components/SuiModal'
 import GraphBar from './components/GraphBar'
 import InfoCard from './components/InfoCard'
+import NavBar from './components/NavBar'
 
 export default {
   name: 'App',
@@ -127,7 +92,8 @@ export default {
     MapModal,
     GraphBar,
     SuiModal,
-    InfoCard
+    InfoCard,
+    NavBar
   },
   data () {
     return {
@@ -145,7 +111,11 @@ export default {
       labelsMinTemp : [],
       datasetsMinTemp : [],
       labelsMaxTemp : [],
-      datasetsMaxTemp : []
+      datasetsMaxTemp : [],
+      currentHumidity : null,
+      currentSummary : null,
+      currentWindSpeed : null,
+      currentTemperature : null
     }
   },
 
@@ -181,10 +151,13 @@ export default {
         this.datasetsMinTemp = this.forecast.daily.data.map( day => parseInt(day.temperatureMin - 32) * 5/9)
         this.labelsMaxTemp = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0])
         this.datasetsMaxTemp = this.forecast.daily.data.map( day => parseInt(day.temperatureMax - 32) * 5/9)
-      
+        this.currentHumidity = (this.forecast.currently.humidity * 100).toFixed(1) || null
+        this.currentSummary = this.forecast.currently.summary || null
+        this.currentWindSpeed = this.forecast.currently.windSpeed * 1,852 || null
+        this.currentTemperature = ((this.forecast.currently.temperature - 32) * 5/9).toFixed(1) || null
        },
-      async updateLocation() {
-        const result = await DarkSkyData.getCoordinates(this.localisation)
+      async updateLocation(localisation) {
+        const result = await DarkSkyData.getCoordinates(localisation)
           if(result.error) this.loadWeather(this.location.lat, this.location.long);
           else this.loadWeather(result.latitude, result.longitude);
       },
