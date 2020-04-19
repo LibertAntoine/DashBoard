@@ -4,7 +4,7 @@
         <h2>{{ title }}</h2>
     </div>
     <div v-if="datasets">
-    <div v-for="data in datasets" :key="data" class="ui statistics">
+    <div v-for="data in datasets" :key="data.label" class="ui statistics">
     <div class="statistic">
         <div class="value">
         {{ data.value }}
@@ -22,8 +22,8 @@
 export default {
   name: 'InfoCard',
   props: {
-        datasets: {type:Array, default: null},
-        title: {type:String, default: null},
+        datasets: {type: Array, default: null},
+        title: {type: String, default: null},
         height: {type: Number, default: 200},
         width: {type: Number, default: 300}
     }
