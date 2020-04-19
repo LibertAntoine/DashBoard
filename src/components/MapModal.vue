@@ -1,27 +1,22 @@
 <template>
     <SuiModal ref='modal' :title='"Location Selection"'>
-
-        <div class='mapContainer' :style="{'height': this.height}">
-            <div class="info" style='height: 15%'>
-                <span>Center: {{ center }}</span>
-                <span>Zoom: {{ zoom }}</span>
-                <span>Bounds: {{ bounds }}</span>
-            </div>
+        <div class='mapContainer'>
             <LMap class='map'
-                style="height: 80%; width: 100%"
                 :zoom='zoom'
                 :center='center'
                 @update:zoom='zoomUpdated'
                 @update:center='centerUpdated'
                 @update:bounds='boundsUpdated'
+                @ready='mapReady'
             >
                 <LTileLayer :url='url' />
-                <LCircleMarker :lat-lng='selectedLocation' :radius='circleMakerRadius' color='red' />
-                <!-- <l-marker :lat-lng='selectedLocation' :icon='markerIcon'></l-marker> -->
+                <LMarker :lat-lng='selectedLocation' ></LMarker>
             </LMap>
         </div>
         <template v-slot:actions>
-            <sui-button positive @click.prevent='$refs.modal.toggle'> CLOSE </sui-button>
+            <sui-button positive @click.prevent="btnSelect"> Select </sui-button>
+            <sui-button positive @click.prevent='$refs.modal.toggle'> Close </sui-button>
+            
         </template>
     </SuiModal>
 </template>
@@ -30,8 +25,8 @@
 import DataApi from '../services/Api/Data'
 import SuiModal from './SuiModal'
 
-import { latLng, icon } from "leaflet";
-import { LMap, LTileLayer, LCircleMarker } from 'vue2-leaflet';
+import { latLng, icon, popup } from "leaflet";
+import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 
 export default {
     
@@ -40,58 +35,27 @@ export default {
         SuiModal,
         LMap, 
         LTileLayer,
-        LCircleMarker
+        LMarker
         
     },
     data() {
         return {
             url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            zoom: 3,
-            center: latLng(47.413220, -1.219482),
+            zoom: 6,
+            center: latLng(this.defaultLoc.lat, this.defaultLoc.lng),
             bounds: null,
-            selectedLocation: latLng(0, 0),
-            markerIcon: icon({
-                iconUrl: '../assets/map-marker-solid.sv',
-                iconSize: [32, 37],
-                iconAnchor: [16, 37]
-            }),
-            circleMakerRadius: 4
+            selectedLocation: latLng(this.defaultLoc.lat, this.defaultLoc.lng),
+            updateMapDisplay: () => {}
         };
     },
-    mounted() {
-        // this.geolocate();
+    async mounted() {
+        this.geolocate();
     },
     props: {
-        width: {
-            type: String,
-            default: '800px'
-        },
-        height: {
-            type:  String,
-            default: '500px'
-        },
-        overlayColor: {
-            type: String,
-            default: '#000000'
-        },
-        overlayOpacity: {
-            type: Number,
-            default: 0.3,
-            validator: function (v) {
-                return v >= 0 && v <= 1;
-            }
-        },
-        backgroundColor: {
-            type: String,
-            default: '#ffffff'
-        },
-        clickToClose: {
-            type: Boolean,
-            default: true
-        },
-        delay: {
-            type: Number,
-            default: 200
+        defaultLoc: { 
+            type: Object,
+            default: () => {return {lat: 48.8534, lng: 2.3488}},
+            validator: (v) => v.lat !== undefined && v.lng !== undefined && typeof v.lat === 'number' && typeof v.lng === 'number'
         }
     },
     methods: {
@@ -106,24 +70,34 @@ export default {
         },
         toggle () {
             this.$refs.modal.toggle();
+            setTimeout(this.updateMapDisplay, 100); // update invalid size display
+            this.updateMapDisplay = () => {};
         },
-
+        btnSelect() {
+            this.$emit('select', this.selectedLocation.lat, this.selectedLocation.lng);
+            this.toggle();
+        },
+        clickEvent (e) {
+            this.setSelectedLocation(e.latlng);
+            this.goToSelectedLocation();
+        },
         goToSelectedLocation () {
             this.center = latLng(this.selectedLocation.lat, this.selectedLocation.lng)
-            
         },
-        setNewLocation(lat, lng) {
-            this.$emit('selectedLocUpdated', this.selectedLocation);
+        mapReady (map) {
+            map.on('click', this.clickEvent); // registerClickEvent
+            this.updateMapDisplay = () => map.invalidateSize();
+        },
+        setSelectedLocation(lat, lng) {
+            this.selectedLocation = (lat instanceof latLng) ? lat : latLng(lat, lng);
+            this.$emit('updated', this.selectedLocation.lat, this.selectedLocation.lng);
         },
         async geolocate() {
             const location = await DataApi.getLocation();
-            console.log('location:', location)
-            // navigator.geolocation.getCurrentPosition(position => {
-            // this.center = {
-            //     lat: position.coords.latitude,
-            //     lng: position.coords.longitude
-            // };
-            this.center = latLng(location.latitude || 0, location.longitude || 0)
+            if (location) { 
+                this.setSelectedLocation(location.latitude, location.longitude);
+                this.goToSelectedLocation();
+            }
         }
     }
 }
@@ -131,4 +105,13 @@ export default {
 
 <style lang="scss" scoped>
 
+.mapContainer {
+    height: 400px; 
+    width: 100%;
+}
+
+.map {
+    height: 100%; 
+    width: 100%;
+}
 </style>
