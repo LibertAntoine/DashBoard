@@ -1,62 +1,123 @@
 <template>
-  <div id="app">
-    <NavBar :update='updateLocation'/>
+  <sui-container fluid id='app'>
 
-    <div class="ui stackable four column grid centered">
-      <WeatherMap class="four wide column" :embedURL='embedURL' title='Localisation Map' :height='600' :width='500' />
+    <!-- ----- MENU ----- -->
+    <sui-segment clearing id='menu'>
+      <sui-header size='large' floated='left' id='title'>Weather Board</sui-header>  
+      <sui-menu floated='right' compact>
+          <sui-menu-item>
+            <sui-input transparent icon='search' placeholder='Enter Location...'/>
+          </sui-menu-item>
+          <sui-menu-item right> <sui-button icon='map' @click.prevent='$refs.mapModal.toggle'/> </sui-menu-item>
+      </sui-menu>
+    </sui-segment>
 
-      <GraphBar class="column" 
-        :datasets="[
-            { x: this.labelsMinTemp, y: this.datasetsMinTemp, type: 'bar', name: 'Min'},
-            { x: this.labelsMaxTemp, y: this.datasetsMaxTemp, type: 'bar', name: 'Max'}
-        ]"
-        :range='[Math.min(...this.datasetsMinTemp) - 5, Math.max(...this.datasetsMaxTemp)]'
-        title='Temperature (°C)'
-        :height='300' 
-        :width='400' />
+    <sui-divider />
 
-      <InfoCard class="column" 
-        :title='currentSummary'
-        :datasets='[
-          {label:"Temperature", value: currentTemperature + " °C"}
-        ]'
-        :height='170' 
-        :width='250' />
+    <!-- ----- CONTENT ----- -->
+    <sui-container id=' mainContent' fluid>
+      <sui-grid>
+        <sui-grid-row>
 
-        <InfoCard class="column" 
-        title="Details"
-        :datasets='[
-          {label:"Humidity", value: currentHumidity + " %"},
-          {label:"Windspeed", value: currentWindSpeed + " km/h"}
-        ]'
-        :height='230' 
-        :width='320' />
+          <sui-grid-column :width='7'>
+            <WeatherMap class="four wide column" :embedURL='embedURL' :height=400 title=''/>
+          </sui-grid-column>
 
-        <InfoCard class="column" 
-        :title='"Weather today at :" + this.address'
-        :height='130' 
-        :width='400' />
-    </div>
-    <SuiModal :title='"test titre"' ref='testModal'> 
-    <p>test du component Modal</p>
-    </SuiModal>
-    <MapModal ref='mapModal'/>
-    <sui-button @click.prevent='$refs.testModal.toggle'>Show Modal</sui-button>
-    <sui-button @click.prevent='$refs.mapModal.toggle'>Show mapModal</sui-button>
-    <SunDisplay
-      width= '300px'
-      :sunriseHours='locationInformation.sunrise || "00:00"'
-      :sunsetHours='locationInformation.sunset || "00:00"'
-    />
-    <MoonPhase
-      :testPercentage='MoonPhaseTestPercentage'
-      width= '200px'
-    />
+          <sui-grid-column :width='9'>
+            <sui-grid :columns='2'>
+              <sui-grid-row stretched>
 
-    <input type="range" min="0" max="100" value="25" class="slider" id="myRange" @input="updatePercentage">
-    <br/>
+                <sui-grid-column>
+                  <sui-segment>
+                    <sui-header size='large'> {{ this.locationInformations.address.name }} </sui-header>
+                    <sui-header size='small'> {{ this.locationInformations.address.street }} </sui-header>
+                    <sui-statistic >
+                      <sui-statistic-value> {{ currentTemperature }} °C </sui-statistic-value>
+                      <sui-statistic-label>temperature</sui-statistic-label>
+                    </sui-statistic>
+                  </sui-segment>
+                </sui-grid-column>
 
-  </div>
+                <sui-grid-column>
+                  <sui-segment>
+                    <sui-header size='large'> Details </sui-header>
+                    <sui-statistics-group horizontal :columns='2'>
+                      <sui-statistic in-group >
+                        <sui-statistic-value> {{ this.currentHumidity }} % </sui-statistic-value>
+                        <sui-statistic-label> Humidity </sui-statistic-label>
+                      </sui-statistic>
+                      <sui-statistic in-group>
+                        <sui-statistic-value> {{ this.currentWindSpeed }} </sui-statistic-value>
+                        <sui-statistic-label> <span class="tiny">km/h</span> <br/> Windspeed </sui-statistic-label>
+                      </sui-statistic>
+                    </sui-statistics-group>
+                  </sui-segment>
+                </sui-grid-column>
+
+              </sui-grid-row>
+              <sui-grid-row stretched>
+
+                <sui-grid-column>
+                  <sui-segment>
+                    <SunDisplay
+                      width= 'auto'
+                      :sunriseHours='locationInformations.sunrise || "00:00"'
+                      :sunsetHours='locationInformations.sunset || "00:00"'
+                    />
+                  </sui-segment>
+                </sui-grid-column>
+
+                <sui-grid-column>
+                  <sui-segment>
+                    <MoonPhase
+                      :testPercentage='MoonPhaseTestPercentage'
+                      width= '200px'
+                    />
+                  </sui-segment>
+                </sui-grid-column>
+                  
+              </sui-grid-row>
+            </sui-grid>
+
+          </sui-grid-column>
+        </sui-grid-row>
+
+        <sui-grid-row :columns='2'>
+
+          <sui-grid-column>
+            <sui-segment>
+              <GraphBar class="column" 
+                :datasets="[
+                { x: this.labelsMinTemp, y: this.datasetsMinTemp, type: 'bar', name: 'Min'},
+                { x: this.labelsMaxTemp, y: this.datasetsMaxTemp, type: 'bar', name: 'Max'}
+                ]"
+                :range='[Math.min(...this.datasetsMinTemp) - 5, Math.max(...this.datasetsMaxTemp)]'
+                title='Temperature (°C)'
+                :height='300'
+              />
+            </sui-segment>
+          </sui-grid-column>
+
+          <sui-grid-column>
+            <sui-segment>
+              <GraphBar class="column" 
+                :datasets="[
+                { x: this.labelsMinTemp, y: this.datasetsMinTemp, type: 'bar', name: 'Min'},
+                { x: this.labelsMaxTemp, y: this.datasetsMaxTemp, type: 'bar', name: 'Max'}
+                ]"
+                :range='[Math.min(...this.datasetsMinTemp) - 5, Math.max(...this.datasetsMaxTemp)]'
+                title='Temperature (°C)'
+                :height='300'
+              />
+            </sui-segment>
+          </sui-grid-column>
+
+        </sui-grid-row>
+      </sui-grid>
+
+    </sui-container>
+    <MapModal ref='mapModal' @select='updateLocationFromModal'/>
+  </sui-container>
 </template>
 
 <script>
@@ -69,10 +130,8 @@ import SunDisplay from './components/SunDisplay'
 import MoonPhase from './components/MoonPhase'
 import MapModal from './components/MapModal'
 import WeatherMap from './components/WeatherMap'
-import SuiModal from './components/SuiModal'
 import GraphBar from './components/GraphBar'
 import InfoCard from './components/InfoCard'
-import NavBar from './components/NavBar'
 
 export default {
   name: 'App',
@@ -82,18 +141,17 @@ export default {
     WeatherMap,
     MapModal,
     GraphBar,
-    SuiModal,
-    InfoCard,
-    NavBar
+    // InfoCard
   },
   data () {
     return {
-      clientIp: '',
-      locationInformation: {
+      locationInformations: {
+        address: {},
         sunset: '00:00',
         sunrise: '00:00'
       },
       location: {},
+      defaultLoc: { lat: 48.8534, lng: 2.3488},
       MoonPhaseTestPercentage: 0,
       address : '',
       forecast: null,
@@ -111,42 +169,60 @@ export default {
   },
 
   async created () {
-    this.clientIp = await DataApi.getMyIp();
-    this.location = await DataApi.getLocation();
-    
+    const getGeoloc = await DataApi.getLocation();
+    this.location = getGeoloc || this.defaultLoc;
     // update location information with our longitude & latitude
-    const locationInformation = await DataApi.getLocationInfos(this.location.latitude, this.location.longitude);
-    if (locationInformation) {
-      this.locationInformation = locationInformation;
-    } 
-    this.loadWeather(this.location.latitude || '40.8587', this.location.longitude || '10.3429');
+    // const locationInformation = await DataApi.getLocationInfos(this.location.lat, this.location.lng);
+    // if (locationInformation) { this.locationInformation = locationInformation; } 
   },
 
-  watch: { // define watcher on our variable city and update the data if it changes
-    city: function (newCity) {
-      console.log('Selected city: ' + newCity)
-      this.updateData(newCity)
+  watch: { // define watcher on our location
+    location: function (newLocation) {
+      console.log('new location: ', newLocation)
+      this.updateInfos(newLocation)
     }
   },
   methods: {
+      updateLocationFromModal(lat, lng) {
+        this.location = {lat, lng};
+      },
+
       updatePercentage(event) {
         this.MoonPhaseTestPercentage = parseInt(event.target.value) / 100;
       },
-      // DarkSky
-      async loadWeather(lat, lng) {
-        this.embedURL = DarkSkyData.getEmbedURL(lat, lng)
-        const result = await DarkSkyData.getAddress(lat, lng)
-        this.address = [result.name, result.street].join(' ')
-        this.forecast = await DarkSkyData.getForecast(lat, lng)
-        this.labelsMinTemp = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0])
-        this.datasetsMinTemp = this.forecast.daily.data.map( day => parseInt(day.temperatureMin - 32) * 5/9)
-        this.labelsMaxTemp = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0])
-        this.datasetsMaxTemp = this.forecast.daily.data.map( day => parseInt(day.temperatureMax - 32) * 5/9)
-        this.currentHumidity = (this.forecast.currently.humidity * 100).toFixed(1) || null
-        this.currentSummary = this.forecast.currently.summary || null
-        this.currentWindSpeed = this.forecast.currently.windSpeed * 1,852 || null
-        this.currentTemperature = ((this.forecast.currently.temperature - 32) * 5/9).toFixed(1) || null
-       },
+
+      searchBarGetLatLng() {
+
+      },
+      async updateInfos({lat, lng}) {
+        // console.log('lat:', lat, 'lng:', lng)
+        // ----- DarkSky -----
+        this.embedURL = DarkSkyData.getEmbedURL(lat, lng);
+        this.locationInformations.address = await DarkSkyData.getAddress(lat, lng);
+        this.forecast = await DarkSkyData.getForecast(lat, lng);
+        this.labelsMinTemp = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0]);
+        this.datasetsMinTemp = this.forecast.daily.data.map( day => parseInt(day.temperatureMin - 32) * 5/9);
+        this.labelsMaxTemp = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0]);
+        this.datasetsMaxTemp = this.forecast.daily.data.map( day => parseInt(day.temperatureMax - 32) * 5/9);
+        this.currentHumidity = (this.forecast.currently.humidity * 100).toFixed(1) || null;
+        this.currentSummary = this.forecast.currently.summary || null;
+        this.currentWindSpeed = this.forecast.currently.windSpeed * 1,852 || null;
+        this.currentTemperature = ((this.forecast.currently.temperature - 32) * 5/9).toFixed(1) || null;
+
+        //sun & moon
+        const astroInfos = await DataApi.getLocationInfos(this.location.lat, this.location.lng);
+        console.log('astroInfos', astroInfos);
+        
+        if (astroInfos) { 
+          this.locationInformations = {
+            ...this.locationInformations, 
+            sunset: astroInfos.sunset,
+            sunrise: astroInfos.sunrise,
+            moonset: astroInfos.moonset,
+            moonrise: astroInfos.moonrise
+          }
+        }
+      },
       async updateLocation(localisation) {
         const result = await DarkSkyData.getCoordinates(localisation)
           if(result.error) this.loadWeather(this.location.lat, this.location.long);
@@ -161,8 +237,17 @@ export default {
   padding: 30px;
   background-color : #373635;
 }
+
+#title {
+  padding: 0;
+  margin: 0;
+}
 #graph {
   width: 520px;
+}
+
+.tiny {
+  font-size: 0.8em;
 }
 
 .graph {
