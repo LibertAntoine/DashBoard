@@ -49,16 +49,59 @@ export default {
 </script>
 
 <style>
-#navBar {
-  background-color : white;
+  @font-face {
+  font-family: 'Butler';
+  src: url('../../ressources/font/Butler-Medium.woff2') format('woff2'),
+  url('../../ressources/font/Butler-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  }
+
+  @font-face {
+  font-family: 'Butler';
+  src: url('../../ressources/font/Butler-Black.woff2') format('woff2'),
+  url('../../ressources/font/Butler-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  }
+
+  /*GENERAL*/
+
+  #navBar {
   padding : 5px;
-  border-radius: .28571429rem;
-  box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
   margin: 5px;
   margin-bottom : 20px;
-}
-#colomn {
-    padding-top : 0px !important;
-    padding-bottom : 0px !important;
-}
+  display: flex;
+  justify-content: space-between;
+  }
+  .wide:nth-child(1)  {
+  order: 1;
+  }
+  .wide:nth-child(2) {
+  order: 3;
+  }
+  .wide:nth-child(3) {
+  order: 2;
+  }
+
+  /*TITLE*/
+
+  h1{
+  font-family: Butler !important;
+  font-size: 3em !important;
+  color: #254558;
+  }
+
+  /*SEARCH BAR*/
+
+  #citySearch button{
+  color: #254558 !important;
+  box-shadow: 0 0 0 1px #254558 inset!important;
+  }
+
+  #citySearch button:hover{
+  background-color: #254558!important;
+  color: #f4f5f6 !important;
+  box-shadow: 0 0 0 1px #f4f5f6 inset!important;
+  }
 </style>

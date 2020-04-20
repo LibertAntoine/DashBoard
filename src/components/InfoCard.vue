@@ -31,21 +31,26 @@ export default {
 </script>
 
 <style>
-.statistics {
-    padding-left: 15px;
-}
+  .statistics {
+  padding-left: 15px;
+  }
 
-#infoCard {
+  #infoCard{
   background-color : white;
   padding : 5px;
   border-radius: .28571429rem;
   box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
   margin: 5px;
-}
+  }
 
-.title {
-    margin-top: 5px; 
-    margin-left: 10px; 
-    height: 45px !important;
-}
+  #infoCard h1, h2, h3, h4, h5{
+  font-family: Karla !important;
+  color: #2b2b3a;
+  }
+
+  .title {
+  margin-top: 5px;
+  margin-left: 10px;
+  height: 45px !important;
+  }
 </style>

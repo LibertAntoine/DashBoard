@@ -227,9 +227,9 @@ export default {
 				.remove()
 		},
 		buildSVG() {
-			var defs = d3.select(this.$refs.svg).append("defs");
+			const defs = d3.select(this.$refs.svg).append("defs");
 
-			var gradient = defs.append("linearGradient")
+			const gradient = defs.append("linearGradient")
 				.attr("id", "svgGradient")
 				.attr("gradientUnits", "userSpaceOnUse")
 				.attr("x1", "0%")

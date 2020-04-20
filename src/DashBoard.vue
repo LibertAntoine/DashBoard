@@ -2,7 +2,7 @@
   <div id="app">
     <NavBar :update='updateLocation'/>
 
-    <div class="ui stackable four column grid centered">
+    <div class="ui grid centered" id="content">
       <WeatherMap class="four wide column" :embedURL='embedURL' title='Localisation Map' :height='600' :width='500' />
 
       <GraphBar class="column" 
@@ -33,7 +33,7 @@
         :width='320' />
 
         <InfoCard class="column" 
-        :title='"Weather today at :" + this.address'
+        :title='"Weather today at : " + this.address'
         :height='130' 
         :width='400' />
     </div>
@@ -157,26 +157,77 @@ export default {
 </script>
 
 <style>
-#app {
-  padding: 30px;
-  background-color : #373635;
-}
-#graph {
-  width: 520px;
-}
+  @font-face {
+  font-family: 'Karla';
+  src: url('../ressources/font/Karla.ttf');
+  font-style: normal;
+  }
 
-.graph {
+  @font-face {
+  font-family: 'Karla';
+  src: url('../ressources/font/Karla-Italic.ttf');
+  font-style: italic;
+  }
+
+  #content{
+  display: flex;
+  }
+
+  /*ORDER*/
+
+  .column:nth-child(1)  {
+  order: 5;
+  align-self: flex-end;
+  }
+  .column:nth-child(2) {
+  order: 4;
+  height: 358px !important;
+  }
+  .column:nth-child(3) {
+  order: 2;
+  height: 358px !important;
+  }
+  .column:nth-child(4) {
+  order: 3;
+  height: 358px !important;
+  }
+  .column:nth-child(5) {
+  order: 1;
+  width: 100% !important;
+  height: auto !important;
+  text-align: center !important;
+  background: none !important;
+  box-shadow: none !important;
+  }
+
+  /*GENERAL*/
+
+  .ui.statistic>.value, .ui.statistics .statistic>.value{
+  font-family:Karla !important;
+  color: #2b2b3a;
+  }
+
+  #app {
+  padding: 30px;
+  background-color : #F5F5F7;
+  }
+  #graph {
+  width: 520px;
+  }
+
+  .graph {
   display: inline-block;
   width: 500px;
-}
-#cityInput {
+  }
+  #cityInput {
   margin-right : 3px;
-}
-#citySearch {
+  }
+  #citySearch {
   margin-bottom : 10px;
-}
-#tempGraph {
+  }
+  #tempGraph {
   border-radius : 30px;
-}
+  }
+
 
 </style>
