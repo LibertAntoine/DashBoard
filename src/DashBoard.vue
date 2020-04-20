@@ -6,7 +6,8 @@
       <sui-header size='large' floated='left' id='title'>Weather Board</sui-header>  
       <sui-menu floated='right' compact>
           <sui-menu-item>
-            <sui-input transparent icon='search' placeholder='Enter Location...'/>
+           
+            <sui-input transparent icon='search' v-model='searchInput.value' @keyup.enter='inputEnterHandler' :placeholder='searchInput.placeholder'/>
           </sui-menu-item>
           <sui-menu-item right> <sui-button icon='map' @click.prevent='$refs.mapModal.toggle'/> </sui-menu-item>
       </sui-menu>
@@ -145,6 +146,10 @@ export default {
   },
   data () {
     return {
+      searchInput: {
+        placeholder: "Enter Location...",
+        value: ""
+      },
       locationInformations: {
         address: {},
         sunset: '00:00',
@@ -178,11 +183,22 @@ export default {
 
   watch: { // define watcher on our location
     location: function (newLocation) {
-      console.log('new location: ', newLocation)
       this.updateInfos(newLocation)
     }
   },
   methods: {
+
+      async inputEnterHandler() {
+        const result = await DarkSkyData.getCoordinates(this.searchInput.value)
+        if(result.error) {
+          console.log('location not found');
+        } else {
+          this.location = {lat: result.latitude, lng: result.longitude};
+        }
+
+        this.searchInput.value = ''; // reset input value
+        
+      },
       updateLocationFromModal(lat, lng) {
         this.location = {lat, lng};
       },
@@ -211,7 +227,7 @@ export default {
 
         //sun & moon
         const astroInfos = await DataApi.getLocationInfos(this.location.lat, this.location.lng);
-        console.log('astroInfos', astroInfos);
+        // console.log('astroInfos', astroInfos);
         
         if (astroInfos) { 
           this.locationInformations = {

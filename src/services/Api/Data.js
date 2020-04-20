@@ -50,7 +50,7 @@ export default {
         navigator.geolocation.getCurrentPosition(resolve, reject);
       })
       .then(res => {
-        return {latitude: res.coords.latitude, longitude: res.coords.longitude, accuracy: res.coords.accuracy}; 
+        return {lat: res.coords.latitude, lng: res.coords.longitude, accuracy: res.coords.accuracy}; 
       })  
       .catch((error) => {
         console.log('Erreur lors de la géolocalisation :');
