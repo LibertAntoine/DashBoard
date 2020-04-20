@@ -1,15 +1,15 @@
 <template>
-    <div class="sunDisplay" :style="{'background-color': this.backgroundColor, 'width': this.width}">
-        <p class="sunTitle"> about Sun </p>
+    <div class="display" :style="{'background-color': this.backgroundColor, 'width': this.width}">
+        <p class="title"> {{ title }} </p>
         <p class="time"> {{ this.formatDate }} </p>
         <div class="svgContainter">
             <svg class="sunSvg" viewBox="0 2 200 40" preserveAspectRatio="xMinYMin meet">
-                <path class="sunCurveFill" :d="this.path"/>
+                <path class="curveFill" :d="this.path"/>
                 <path 
-                    class="sunCurve" :d="this.path"
+                    class="curve" :d="this.path"
                     :style="{'stroke': this.fillColor, 'stroke-dasharray': this.length, 'strokeDashoffset': this.strokeDashoffset }" 
                 />
-                <circle class="sunCircle" :style="{'fill': this.fillColor, 'stroke': 'none'}" :cx="this.sunCirclePos.x" :cy="this.sunCirclePos.y" r="4"/>
+                <circle class="circle" :style="{'fill': this.fillColor, 'stroke': 'none'}" :cx="this.circlePos.x" :cy="this.circlePos.y" r="4"/>
             </svg>
         </div>
         <div class="sunriseHours"> {{ this.sunriseHours }} </div>
@@ -63,7 +63,7 @@ export default {
         formatDate() {
             return [this.time.hours, this.time.minutes, this.time.seconds].map(x => ((x > 9) ? '' : '0') + x).join(':')
         },
-        sunCirclePos() {
+        circlePos() {
             return quadraticBezierpos(p0, p1, p2, this.percentage);
         }
     },
@@ -77,6 +77,10 @@ export default {
             type: String,
             required: true
         },
+        title: {
+            type: String,
+            required: true
+        },
         fillColor: {
             type: String,
             default: '#f77a52'
@@ -87,7 +91,7 @@ export default {
         },
         width: {
             type: String,
-            required: true
+            default: 'auto'
         }
     },
 
@@ -104,7 +108,7 @@ export default {
 <style scoped>
     @import url('https://fonts.googleapis.com/css?family=Playfair+Display&display=swap');
 
-    .sunDisplay {
+    .display {
         position: relative;
         display: flex;
         flex-direction: column;
@@ -117,7 +121,7 @@ export default {
         
     }
 
-    .sunTitle, .time, .sunriseHours, .sunsetHours {
+    .title, .time, .sunriseHours, .sunsetHours {
         position: absolute;
         margin: 0;
         font-family: 'Playfair Display', serif;
@@ -125,7 +129,7 @@ export default {
         color: #5e5e5e;
     }
 
-    .sunTitle {
+    .title {
         top: 5%;
     }
     .time {
@@ -160,18 +164,18 @@ export default {
         margin: 0;
         /* border: thin dotted darkgrey;  for help debug*/ 
     }
-    .sunCurve, .sunCurveFill {
+    .curve, .curveFill {
         fill: none;
         stroke-width: 5px;
         stroke-linecap: round;
     }
 
-    .sunCurve {
+    .curve {
         transition-duration: 1s;
         transition-property: strokeDashoffset;
     }
 
-    .sunCurveFill {
+    .curveFill {
         stroke: #e6e6e6;
     }
 

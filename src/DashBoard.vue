@@ -60,10 +60,16 @@
 
                 <sui-grid-column>
                   <sui-segment>
-                    <SunDisplay
-                      width= 'auto'
+                    <CelestialDisplay
+                      :title='"Sun"'
                       :sunriseHours='locationInformations.sunrise || "00:00"'
                       :sunsetHours='locationInformations.sunset || "00:00"'
+                    />
+                    <CelestialDisplay
+                      :title='"Moon"'
+                      :sunriseHours='locationInformations.moonrise || "00:00"'
+                      :sunsetHours='locationInformations.moonset || "00:00"'
+                      :fillColor='"23242f"'
                     />
                   </sui-segment>
                 </sui-grid-column>
@@ -127,7 +133,7 @@ import DarkSkyData from '@/services/Api/DarkSkyData';
 
 import { dayTimeToDate } from './services/helpers/conversion'
 
-import SunDisplay from './components/SunDisplay'
+import CelestialDisplay from './components/CelestialDisplay'
 import MoonPhase from './components/MoonPhase'
 import MapModal from './components/MapModal'
 import WeatherMap from './components/WeatherMap'
@@ -137,7 +143,7 @@ import InfoCard from './components/InfoCard'
 export default {
   name: 'App',
   components: {
-    SunDisplay,
+    CelestialDisplay,
     MoonPhase,
     WeatherMap,
     MapModal,
@@ -189,6 +195,8 @@ export default {
   methods: {
 
       async inputEnterHandler() {
+        console.log('inputEnterHandler');
+        
         // ----- find location with DarkSky -----
         const result = await DarkSkyData.getCoordinates(this.searchInput.value)
         if(result.error) {
