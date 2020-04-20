@@ -189,6 +189,7 @@ export default {
   methods: {
 
       async inputEnterHandler() {
+        // ----- find location with DarkSky -----
         const result = await DarkSkyData.getCoordinates(this.searchInput.value)
         if(result.error) {
           console.log('location not found');
@@ -211,7 +212,6 @@ export default {
 
       },
       async updateInfos({lat, lng}) {
-        // console.log('lat:', lat, 'lng:', lng)
         // ----- DarkSky -----
         this.embedURL = DarkSkyData.getEmbedURL(lat, lng);
         this.locationInformations.address = await DarkSkyData.getAddress(lat, lng);
@@ -225,10 +225,8 @@ export default {
         this.currentWindSpeed = this.forecast.currently.windSpeed * 1,852 || null;
         this.currentTemperature = ((this.forecast.currently.temperature - 32) * 5/9).toFixed(1) || null;
 
-        //sun & moon
+        // -----sun & moon -----
         const astroInfos = await DataApi.getLocationInfos(this.location.lat, this.location.lng);
-        // console.log('astroInfos', astroInfos);
-        
         if (astroInfos) { 
           this.locationInformations = {
             ...this.locationInformations, 
@@ -238,12 +236,7 @@ export default {
             moonrise: astroInfos.moonrise
           }
         }
-      },
-      async updateLocation(localisation) {
-        const result = await DarkSkyData.getCoordinates(localisation)
-          if(result.error) this.loadWeather(this.location.lat, this.location.long);
-          else this.loadWeather(result.latitude, result.longitude);
-      },
+      }
   }
 }
 </script>

@@ -14,7 +14,6 @@
 
 <script>
 import { Plotly } from 'vue-plotly'
-console.log(Plotly);
 
 export default {
   name: 'GraphBar',
