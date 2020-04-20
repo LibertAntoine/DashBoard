@@ -1,13 +1,12 @@
 <template>
-  <div id="graphBar" :style="'width:' + (parseInt(width) + 10) + 'px; height:' + (parseInt(height) + 58) + 'px;'">
+  <div id="graphBar" ref="graphBar" :style="`height: ${this.height} px;`"  >
     <h2 id="graphBarTitle">{{ title }}</h2>
-    <Plotly id="graph"
+    <Plotly id="graph" ref="plotly"
     :data="datasets"
     :layout="{
+        autosize:true,
         yaxis: {range: range},
         barmode: 'group',
-        width: width,
-        height: height,
         margin: {l: 50, r: 50, b: 50, t: 50, pad: 4}
     }"/>
   </div>
@@ -15,11 +14,19 @@
 
 <script>
 import { Plotly } from 'vue-plotly'
+console.log(Plotly);
 
 export default {
   name: 'GraphBar',
   components: {
       Plotly
+  },
+  mounted() {
+    window.addEventListener('resize', this.resizeHandle)
+    setTimeout(() => this.resizeHandle(), 100)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.resizeHandle)
   },
   props: {
         datasets: {type: Array, require: true},
@@ -27,6 +34,14 @@ export default {
         title: {type: String, default: 'title'},
         height: {type: Number, default: 500},
         width: {type: Number, default: 500}
+  },
+  methods: {
+    resizeHandle(event) {
+      this.$refs.plotly.relayout({
+        width: this.$refs.graphBar.clientWidth - 10 ,
+        height: this.height
+      });
+    }
   }
 }
 </script>
