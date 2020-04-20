@@ -7,7 +7,14 @@
       <sui-menu floated='right' compact>
           <sui-menu-item>
            
-            <sui-input transparent icon='search' v-model='searchInput.value' @keyup.enter='inputEnterHandler' :placeholder='searchInput.placeholder'/>
+            <sui-input transparent 
+              icon='search' 
+              v-model='searchInput.value' 
+              @keyup.enter='inputEnterHandler' 
+              :placeholder='searchInput.placeholder' 
+              :disable='searchInput.disable'
+              :loading='searchInput.disable'
+            />
           </sui-menu-item>
           <sui-menu-item right> <sui-button icon='map' @click.prevent='$refs.mapModal.toggle'/> </sui-menu-item>
       </sui-menu>
@@ -154,7 +161,8 @@ export default {
     return {
       searchInput: {
         placeholder: "Enter Location...",
-        value: ""
+        value: "",
+        disable: false
       },
       locationInformations: {
         address: {},
@@ -195,16 +203,20 @@ export default {
   methods: {
 
       async inputEnterHandler() {
-        console.log('inputEnterHandler');
-        
+
+        this.searchInput.disable = true;
+
         // ----- find location with DarkSky -----
         const result = await DarkSkyData.getCoordinates(this.searchInput.value)
+        
         if(result.error) {
-          console.log('location not found');
+          console.log(result.error);
         } else {
           this.location = {lat: result.latitude, lng: result.longitude};
+          this.$refs.mapModal.setSelectedLocation( this.location );
         }
 
+        this.searchInput.disable = false;
         this.searchInput.value = ''; // reset input value
         
       },

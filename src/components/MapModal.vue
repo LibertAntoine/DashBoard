@@ -45,7 +45,7 @@ export default {
             center: latLng(this.defaultLoc.lat, this.defaultLoc.lng),
             bounds: null,
             selectedLocation: latLng(this.defaultLoc.lat, this.defaultLoc.lng),
-            updateMapDisplay: () => {}
+            updateMapDisplay: undefined
         };
     },
     async mounted() {
@@ -56,6 +56,12 @@ export default {
             type: Object,
             default: () => {return {lat: 48.8534, lng: 2.3488}},
             validator: (v) => v.lat !== undefined && v.lng !== undefined && typeof v.lat === 'number' && typeof v.lng === 'number'
+        }
+    },
+    watch: {
+        selectedLocation: function () {
+            // set center to selected location
+            this.center = latLng(this.selectedLocation.lat, this.selectedLocation.lng)
         }
     },
     methods: {
@@ -70,8 +76,10 @@ export default {
         },
         toggle () {
             this.$refs.modal.toggle();
-            setTimeout(this.updateMapDisplay, 100); // update invalid size display
-            this.updateMapDisplay = () => {};
+            if(this.updateMapDisplay) {
+                setTimeout(this.updateMapDisplay, 150); // update invalid size display
+                this.updateMapDisplay = undefined; // disable update
+            }
         },
         btnSelect() {
             this.$emit('select', this.selectedLocation.lat, this.selectedLocation.lng);
@@ -79,10 +87,6 @@ export default {
         },
         clickEvent (e) {
             this.setSelectedLocation(e.latlng);
-            this.goToSelectedLocation();
-        },
-        goToSelectedLocation () {
-            this.center = latLng(this.selectedLocation.lat, this.selectedLocation.lng)
         },
         mapReady (map) {
             map.on('click', this.clickEvent); // registerClickEvent
@@ -96,7 +100,6 @@ export default {
             const location = await DataApi.getLocation();
             if (location) { 
                 this.setSelectedLocation(location.latitude, location.longitude);
-                this.goToSelectedLocation();
             }
         }
     }
