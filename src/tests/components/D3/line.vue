@@ -16,6 +16,10 @@ export default {
 		data: {
 			type: Array,
 			default: () => [10, 7, 12, 21, 20, 22, 24, 2, 8]
+		},
+		dataDate: {
+			type: Array,
+			default: () => [1122115, 115555111, 448484111, 554544411, 545555111, 11554545, 111111155, 11545488, 12222222]
 		}
 	},
 	data() {
@@ -188,7 +192,34 @@ export default {
 				.call(y_axis)
 				.call(g => g.select('.domain').remove())
 				.call(g => g.selectAll('line').remove())
-			
+
+
+			const dateScale = d3.scalePoint(this.dataDate, [this.scaleX(0), this.scaleX(this.data.length -1)]);
+			//const size = this.scaleX(this.data.length - 1) - this.scaleX(0);
+
+			d3.json("https://cdn.jsdelivr.net/npm/d3-time-format@2/locale/fr-FR.json")
+				.then(locale => {
+					const fr = d3.timeFormatDefaultLocale(locale);
+
+					const x_axis = d3.axisBottom(dateScale)
+						.tickFormat(fr.format("%d %b"))
+						//.tickSize([10])
+
+					const height = d3.select(this.$refs.svg)
+						.node().height.baseVal.value;
+
+					const x_axisEl = d3.select(this.$refs.svg)
+
+					x_axisEl.append('g')
+						.attr('class', "x_axis")
+					//.attr('style', "font-size: 1em")
+						.attr('transform', `translate(0, ${height - 30})`)
+						.call(x_axis)
+						.call(g => g.select('.domain').remove())
+				})
+				.catch(err => console.log(err))
+
+
 		},
 		buildDots() {
 			this.dots = d3.select(this.$refs.svg).selectAll('g.dot')
