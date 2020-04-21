@@ -82,14 +82,24 @@
                 </sui-grid-column>
 
                 <sui-grid-column>
-                  <sui-segment>
-                    <MoonPhase
-                      :testPercentage='MoonPhaseTestPercentage'
-                      width= '200px'
-                    />
-                  </sui-segment>
+            	 <sui-grid :columns='2'>
+						 	 <sui-grid-row>
+						 	 	 <sui-grid-column>
+                  	 	 	 <sui-segment>
+                    		 	 	 <MoonPhase
+                      		 	 	 :testPercentage='MoonPhaseTestPercentage'
+                      		 	 	 width= '200px'
+                    			 	 	 />
+                  	 	 	 </sui-segment>
+							 	 </sui-grid-column>
+						 	 	 <sui-grid-column fluid>
+                  	 	 	 <sui-segment>
+                    		 	 	 <RainButton @click.native="toggleRain"/>
+                  	 	 	 </sui-segment>
+							 	 </sui-grid-column>
+						 	 </sui-grid-row>
+            	 </sui-grid>
                 </sui-grid-column>
-                  
               </sui-grid-row>
             </sui-grid>
 
@@ -130,6 +140,7 @@
       </sui-grid>
 
     </sui-container>
+    <RainModal :forecast="forecast" ref='rainModal'/>
     <MapModal ref='mapModal' @select='updateLocationFromModal'/>
   </sui-container>
 </template>
@@ -143,9 +154,12 @@ import { dayTimeToDate } from './services/helpers/conversion'
 import CelestialDisplay from './components/CelestialDisplay'
 import MoonPhase from './components/MoonPhase'
 import MapModal from './components/MapModal'
+import RainModal from './components/RainModal'
 import WeatherMap from './components/WeatherMap'
 import GraphBar from './components/GraphBar'
 import InfoCard from './components/InfoCard'
+
+import RainButton from './components/RainButton'
 
 export default {
   name: 'App',
@@ -153,8 +167,10 @@ export default {
     CelestialDisplay,
     MoonPhase,
     WeatherMap,
-    MapModal,
+	 MapModal,
     GraphBar,
+	 RainModal,
+	 RainButton,
     // InfoCard
   },
   data () {
@@ -201,6 +217,9 @@ export default {
     }
   },
   methods: {
+  	  toggleRain() {
+		  this.$refs.rainModal ? this.$refs.rainModal.toggle() : null;
+	  },
 
       async inputEnterHandler() {
 
