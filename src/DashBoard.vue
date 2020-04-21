@@ -124,15 +124,9 @@
 
           <sui-grid-column>
             <sui-segment>
-              <GraphBar class="column" 
-                :datasets="[
-                { x: this.labelsMinTemp, y: this.datasetsMinTemp, type: 'bar', name: 'Min'},
-                { x: this.labelsMaxTemp, y: this.datasetsMaxTemp, type: 'bar', name: 'Max'}
-                ]"
-                :range='[Math.min(...this.datasetsMinTemp) - 5, Math.max(...this.datasetsMaxTemp)]'
-                title='Temperature (°C)'
-                :height='300'
-              />
+               <sui-header size='medium'> Weekly maximum temperature </sui-header>
+					<!--TODO bring actual dates in-->
+					<D3Line :data="forecast.daily.data.map(day => Math.floor((day.temperatureHigh - 32) * 5/9))" :height="350"/>
             </sui-segment>
           </sui-grid-column>
 
@@ -160,6 +154,7 @@ import GraphBar from './components/GraphBar'
 import InfoCard from './components/InfoCard'
 
 import RainButton from './components/RainButton'
+import D3Line from './components/D3/D3Line'
 
 export default {
   name: 'App',
@@ -171,6 +166,7 @@ export default {
     GraphBar,
 	 RainModal,
 	 RainButton,
+	  D3Line,
     // InfoCard
   },
   data () {

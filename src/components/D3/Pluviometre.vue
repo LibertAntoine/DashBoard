@@ -130,22 +130,25 @@ export default {
 </script>
 
 <style lang="less">
-svg {
-	width: 200px;
+.pluviometre {
 
-	.t-stroke {
-		stroke: #0000004d;
-		stroke-width: 3pt;
-		stroke-linejoin: round
-	}
+	svg {
+		width: 200px;
 
-	#Page-1 {
-		.water { fill: #b2d5f2 }
-		.cap {fill:#9e9e9e;}
-		.cls-2 {fill:#6e8691;}
-		.cls-2, .glass {opacity:0.25;}
-		.glass {fill:#0377bc;}
-		.cls-4 {fill:#f5f5f5;}
+		.t-stroke {
+			stroke: #0000004d;
+			stroke-width: 3pt;
+			stroke-linejoin: round
+		}
+
+		#Page-1 {
+			.water { fill: #b2d5f2 }
+			.cap {fill:#9e9e9e;}
+			.cls-2 {fill:#6e8691;}
+			.cls-2, .glass {opacity:0.25;}
+			.glass {fill:#0377bc;}
+			.cls-4 {fill:#f5f5f5;}
+		}
 	}
 }
 </style>
