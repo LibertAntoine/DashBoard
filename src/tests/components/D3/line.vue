@@ -114,16 +114,15 @@ export default {
 		},
 		showDotsgradually() {
 			return new Promise(resolve => {
-				let item = 0;
 				setTimeout(() => {
 					for (let i = 0; i < this.data.length; i++) {
 						setTimeout(async () => {
 							this.animatedData.push(15);
 							this.buildDots();
-							item += 20;
-							if (i == this.data.length - 1)
+
+							if (this.animatedData.length === this.data.length)
 								resolve();
-						}, ((800 / this.data.length) - item) * i);
+						}, ((800 / this.data.length) - i * 20) * i);
 					}
 				}, 1500)
 			})
@@ -138,18 +137,39 @@ export default {
 				.attr('stroke-dashoffset', 0)
 
 			const area = d3.area().x((d, i) => this.scaleX(i)).y0(d => this.scaleY(d)).y1(this.scaleY(0))(this.animatedData);
-			d3.select(this.$refs.svg).selectAll('path.area').data([null])
+
+			const tempZone = d3.select(this.$refs.svg)
+				.selectAll('path.area')
+				.data([null])
+
+			const newTempZone = tempZone
 				.enter()
 				.append('path')
 				.attr('class', "area")
 				.attr('d', area)
 				.attr('opacity', 0)
+
+			tempZone
+				.merge(newTempZone)
 				.transition().duration(1000).ease(d3.easePolyIn)
 				.attr('opacity', 1)
 			
 		},
 		removePath() {
-			this.path.attr('d', "");
+			const pathLength = this.path.node().getTotalLength();
+
+			this.path
+				.transition().duration(1000).ease(d3.easeSinOut)
+				.attr('stroke-dashoffset', -pathLength);
+
+			this.path
+				.attr('stroke-dashoffset', pathLength);
+
+			d3.select(this.$refs.svg)
+				.select('path.area')
+				.transition().duration(1000).ease(d3.easePolyIn)
+				.attr('opacity', 0)
+				//.remove()
 		},
 		buildAxis() {
 			const scale = d3.scalePoint().domain(d3.range(5, 26, 5)).range([500 - 500/6, 500/6])
