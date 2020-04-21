@@ -86,10 +86,16 @@ export default {
 					return "white"
 				}).select(function() { 
 					return this.parentNode
-				})
-				.selectAll('text.t-stroke').data(d => {
-					return [d]
-				}).enter().append('text').text(d => d).attr('class', "t-stroke")
+				}).selectAll('text.t-stroke').data((d, i, nodes) => {
+					return [{
+						d, 
+						x: d3.select(nodes[i]).select('text').attr('x'),
+						dy: d3.select(nodes[i]).select('text').attr('dy')
+					}]
+				}).enter().insert('text', 'text').text(d => d.d)
+				.attr('class', "t-stroke")
+				.attr('x', d => d.x)
+				.attr('dy', d => d.dy)
 		}
 	}
 }
@@ -98,6 +104,12 @@ export default {
 <style lang="less">
 svg {
 	width: 200px;
+
+	.t-stroke {
+		stroke: #0000004d;
+		stroke-width: 3pt;
+		stroke-linejoin: round
+	}
 
 	#Page-1 {
 		.water { fill: #b2d5f2 }
