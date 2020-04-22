@@ -64,7 +64,7 @@ export default {
             return [this.time.hours, this.time.minutes, this.time.seconds].map(x => ((x > 9) ? '' : '0') + x).join(':')
         },
         circlePos() {
-            return quadraticBezierpos(p0, p1, p2, this.percentage);
+            return quadraticBezierpos(p0, p1, p2, this.percentage*1.035);
         }
     },
 
