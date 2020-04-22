@@ -3,7 +3,7 @@
 
     <!-- ----- MENU ----- -->
     <sui-segment clearing id='menu'>
-      <sui-header size='large' floated='left' id='title'>Weather Board</sui-header>  
+      <h1 id='title'>Weather Board</h1>  
       <sui-menu floated='right' compact>
           <sui-menu-item>
            
@@ -23,94 +23,67 @@
     <sui-divider />
 
     <!-- ----- CONTENT ----- -->
-    <sui-container id=' mainContent' fluid>
-      <sui-grid>
-        <sui-grid-row>
+    <div id="content">
+      <h2>
+        {{ locationInformations.address.name }}, <i>{{ locationInformations.address.street }}</i>
+      </h2>
+      <div id="basic-infos" class="rows">
+        <sui-segment>
+            <sui-statistic in-group='' >
+              <sui-statistic-value>
+                {{ weatherInfos.current.temp }} <span class='tiny'>°C</span>
+              </sui-statistic-value>
+            </sui-statistic>
+        </sui-segment>
+        <sui-segment>
+            <sui-statistic in-group='' >
+              <sui-statistic-value> {{ weatherInfos.current.humidity }} <span class='tiny'>%</span>
+            </sui-statistic-value>
+            </sui-statistic>
+        </sui-segment>
+        <sui-segment>
+            <sui-statistic in-group=''>
+              <sui-statistic-value> {{ weatherInfos.current.windSpeed }} <span class='tiny'>km/h</span>
+              </sui-statistic-value>
+            </sui-statistic>
+        </sui-segment>
+      </div>
 
-          <sui-grid-column :width='7'>
-            <WeatherMap class="four wide column" :embedURL='embedURL' :height=400 title=''/>
-          </sui-grid-column>
+      <div id='first-row' class='rows'>
 
-          <sui-grid-column :width='9'>
-            <sui-grid :columns='2'>
-              <sui-grid-row stretched>
+        <sui-segment>
+            <CelestialDisplay
+                          :title='"Sun"'
+                          :sunriseHours='locationInformations.sunrise || "00:00"'
+                          :sunsetHours='locationInformations.sunset || "00:00"'
+                        />
+            <CelestialDisplay
+              :title='"Moon"'
+              :sunriseHours='locationInformations.moonrise || "00:00"'
+              :sunsetHours='locationInformations.moonset || "00:00"'
+              :fillColor='"23242f"'
+                        />
+        </sui-segment>
+        <sui-segment>
+          <MoonPhase
+                                  :testPercentage='MoonPhaseTestPercentage'
+                                  width= 'auto'
+                    			 	 	     />
+        </sui-segment>
+        <sui-segment>
+          <sui-statistic in-group='' >
+            <sui-header size='large'> Click for rain details </sui-header>
+            <RainButton @click.native="toggleRain"/>
+          </sui-statistic>
+        </sui-segment>
+      </div>
 
-                <sui-grid-column>
-                  <sui-segment>
-                    <sui-header size='large'> {{ locationInformations.address.name }} </sui-header>
-                    <sui-header size='small'> {{ locationInformations.address.street }} </sui-header>
-                    <sui-statistic >
-                      <sui-statistic-value> {{ weatherInfos.current.temp }} °C </sui-statistic-value>
-                      <sui-statistic-label>temperature</sui-statistic-label>
-                    </sui-statistic>
-                  </sui-segment>
-                </sui-grid-column>
-
-                <sui-grid-column>
-                  <sui-segment>
-                    <sui-header size='large'> Details </sui-header>
-                    <sui-statistics-group horizontal :columns='2'>
-                      <sui-statistic in-group >
-                        <sui-statistic-value> {{ weatherInfos.current.humidity }} % </sui-statistic-value>
-                        <sui-statistic-label> Humidity </sui-statistic-label>
-                      </sui-statistic>
-                      <sui-statistic in-group>
-                        <sui-statistic-value> {{ weatherInfos.current.windSpeed }} </sui-statistic-value>
-                        <sui-statistic-label> <span class="tiny">km/h</span> <br/> Windspeed </sui-statistic-label>
-                      </sui-statistic>
-                    </sui-statistics-group>
-                  </sui-segment>
-                </sui-grid-column>
-
-              </sui-grid-row>
-              <sui-grid-row stretched>
-
-                <sui-grid-column>
-                  <sui-segment>
-                    <CelestialDisplay
-                      :title='"Sun"'
-                      :sunriseHours='locationInformations.sunrise || "00:00"'
-                      :sunsetHours='locationInformations.sunset || "00:00"'
-                    />
-                    <CelestialDisplay
-                      :title='"Moon"'
-                      :sunriseHours='locationInformations.moonrise || "00:00"'
-                      :sunsetHours='locationInformations.moonset || "00:00"'
-                      :fillColor='"23242f"'
-                    />
-                  </sui-segment>
-                </sui-grid-column>
-
-                <sui-grid-column>
-            	 <sui-grid :columns='2'>
-						 	 <sui-grid-row>
-						 	 	 <sui-grid-column>
-                  	 	 	 <sui-segment>
-                    		 	 	 <MoonPhase
-                      		 	 	 :testPercentage='MoonPhaseTestPercentage'
-                      		 	 	 width= 'auto'
-                    			 	 	 />
-                  	 	 	 </sui-segment>
-							 	 </sui-grid-column>
-						 	 	 <sui-grid-column fluid>
-                  	 	 	 <sui-segment>
-                    		 	 	 <RainButton @click.native="toggleRain"/>
-                  	 	 	 </sui-segment>
-							 	 </sui-grid-column>
-						 	 </sui-grid-row>
-            	 </sui-grid>
-                </sui-grid-column>
-              </sui-grid-row>
-            </sui-grid>
-
-          </sui-grid-column>
-        </sui-grid-row>
-
-        <sui-grid-row :columns='2'>
-
-          <sui-grid-column>
-            <sui-segment>
-              <GraphBar class="column" 
+      <div id='graphs' class='rows'>
+        <div id='left'>
+          <WeatherMap class="four wide column" :embedURL='embedURL' :height='400' title=''/>
+        </div>
+        <div id='right'>
+          <GraphBar class="column"
                 :datasets="[
                 { x: weatherInfos.daily.daysLabels, y: weatherInfos.daily.tempMin, type: 'bar', name: 'Min'},
                 { x: weatherInfos.daily.daysLabels, y: weatherInfos.daily.tempMax, type: 'bar', name: 'Max'}
@@ -119,23 +92,18 @@
                 title='Temperature (°C)'
                 :height='300'
               />
-            </sui-segment>
-          </sui-grid-column>
 
-          <sui-grid-column>
-            <sui-segment>
-               <sui-header size='medium'> Weekly maximum temperature </sui-header>
-					<!--TODO bring actual dates in-->
+          <sui-segment>
+            <sui-header size='medium'> Weekly maximum temperature </sui-header>
+            <!--TODO bring actual dates in-->
             <D3Line :data="weatherInfos.daily.tempMax" :height="350"/>
-            </sui-segment>
-          </sui-grid-column>
+          </sui-segment>
+        </div>
+      </div>
 
-        </sui-grid-row>
-      </sui-grid>
-
-    </sui-container>
-    <RainModal :forecast="forecast" ref='rainModal'/>
-    <MapModal ref='mapModal' @select='updateLocationFromModal'/>
+      <RainModal :forecast="forecast" ref='rainModal'/>
+      <MapModal ref='mapModal' @select='updateLocationFromModal'/>
+    </div>
   </sui-container>
 </template>
 
@@ -298,35 +266,131 @@ export default {
 </script>
 
 <style>
-#app {
-  padding: 30px;
-  background-color : #373635;
-}
+  @font-face {
+  font-family: 'Butler';
+  src: url('../fonts/Butler-Black.woff2') format('woff2'),
+  url('../fonts/Butler-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  }
 
-#title {
+  @font-face {
+  font-family: 'Karla';
+  src: url('../fonts/Karla-Regular.ttf');
+  }
+
+  #app {
+  padding: 30px;
+  background-color : #f4f5f6;
+  }
+
+  /*MENU*/
+  #menu{
+  border: none;
+  box-shadow: none;
+  background: none;
+  align-items: center;
+  padding: 0 5%;
+  }
+
+  #title {
+  font-family: Butler;
+  font-size: 3em;
+  color: #2b2b3a;
   padding: 0;
   margin: 0;
-}
-#graph {
-  width: 520px;
-}
+  display: inline-flex;
+  }
 
-.tiny {
-  font-size: 0.8em;
-}
+  /*CONTENT*/
 
-.graph {
-  display: inline-block;
-  width: 500px;
-}
-#cityInput {
-  margin-right : 3px;
-}
-#citySearch {
-  margin-bottom : 10px;
-}
-#tempGraph {
-  border-radius : 30px;
-}
+  #content{
+  text-align: center;
+  font-family: Karla;
+  }
+
+  h2{
+  color: #254558;
+  font-family: Karla !important;
+  }
+
+  h2 i{
+  font-size: 0.7em;
+  }
+
+  .rows{
+  display: flex;
+  justify-content: space-between;
+  }
+
+  .rows > .ui.segment{
+  width: 30%;
+  margin: 0 !important;
+  justify-content: space-between;
+  margin-bottom: 1.66em !important;
+  background-size: contain;
+  background-position: right 30% bottom 50%;
+  background-repeat: no-repeat;
+  }
+
+  #basic-infos > .ui.segment{
+  display: flex;
+  height: 100px;
+  }
+
+  #first-row > .ui.segment{
+  height: 300px;
+  }
+
+  #basic-infos > .ui.segment:first-child{
+  background-image: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)),
+  url("../images/temp.png");
+  }
+  #basic-infos > .ui.segment:nth-child(2){
+  background-image: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)),
+  url("../images/humidity.png");
+  }
+  #basic-infos > .ui.segment:nth-child(3){
+  background-image: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)),
+  url("../images/wind.png");
+  }
+
+  #basic-infos > .ui.segment > .ui.statistic{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 10%;
+  padding-right: 5%;
+  width: 100%;
+  }
+
+  .label{
+  margin-left: 5%;
+  }
+
+  .tiny{
+  font-size: 0.5em;
+  }
+
+  #first-row .ui.segment > * {
+  box-shadow: none;
+  }
+
+  #first-row > .ui.segment > .display:first-child{
+  margin-bottom: 10px !important;
+  }
+  
+  #graphs{
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  #right{
+  width: 30%;
+  }
+  
+  #left{
+  width: 65%;
+  }
 
 </style>

@@ -105,13 +105,11 @@ export default {
         border-radius: 10px;
         /* offset-x | offset-y | blur-radius | color */
         box-shadow: 2vw 2vw 6vw #dddddd;
-        padding: 2em;
+        height: 100%;
         
     }
 
     .svgContainter {
-        position: relative;
-        height: 0;
         width: 100%;
         padding: 0;
         /* aspect ratio of our viewBox svg; */
