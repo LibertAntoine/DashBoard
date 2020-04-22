@@ -48,7 +48,12 @@ export default {
 			}
 		}
 	},
-	props: [ 'forecast' ],
+	props: {
+		forecast: {
+			type: Object,
+			default: () => {}
+		} 
+	},
 	methods: {
 		time(data) {
 			const date = new Date(data.time * 1000);

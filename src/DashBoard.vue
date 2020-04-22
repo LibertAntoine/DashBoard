@@ -112,10 +112,10 @@
             <sui-segment>
               <GraphBar class="column" 
                 :datasets="[
-                { x: weatherInfos.daily.tempMin.labels, y: weatherInfos.daily.tempMin.data, type: 'bar', name: 'Min'},
-                { x: weatherInfos.daily.tempMax.labels, y: weatherInfos.daily.tempMax.data, type: 'bar', name: 'Max'}
+                { x: weatherInfos.daily.daysLabels, y: weatherInfos.daily.tempMin, type: 'bar', name: 'Min'},
+                { x: weatherInfos.daily.daysLabels, y: weatherInfos.daily.tempMax, type: 'bar', name: 'Max'}
                 ]"
-                :range='[Math.min(...weatherInfos.daily.tempMin.data) - 5, Math.max(...weatherInfos.daily.tempMax.data)]'
+                :range='[Math.min(...weatherInfos.daily.tempMin) - 5, Math.max(...weatherInfos.daily.tempMax)]'
                 title='Temperature (°C)'
                 :height='300'
               />
@@ -126,7 +126,7 @@
             <sui-segment>
                <sui-header size='medium'> Weekly maximum temperature </sui-header>
 					<!--TODO bring actual dates in-->
-					<D3Line :data="forecast.daily.data.map(day => Math.floor((day.temperatureHigh - 32) * 5/9))" :height="350"/>
+            <D3Line :data="weatherInfos.daily.tempMax" :height="350"/>
             </sui-segment>
           </sui-grid-column>
 
@@ -185,17 +185,26 @@ export default {
       defaultLoc: { lat: 48.8534, lng: 2.3488},
       MoonPhaseTestPercentage: 0,
       address : '',
-      forecast: null,
+      forecast: {
+        data: {
+          
+        }
+      },
       weatherInfos: {
         current: {
-          humidity: 0,
-          windSpeed: 0,
-          temp: 0
+          summary: 'undefined',
+          humidity: undefined,
+          windSpeed: undefined,
+          temp: undefined
         },
         daily: {
-          tempMin: { labels: [], data: [] },
-          tempMax: { labels: [], data: [] },
-          windSpeed: { labels: [], data: [] },
+          daysLabels: [],
+          daysSummary: [],
+          tempMin: [],
+          tempMax: [],
+          windBearing: [],
+          windSpeed: [],
+          cloudCover: []
         }
       },
       embedURL: ''
@@ -243,22 +252,34 @@ export default {
         this.MoonPhaseTestPercentage = parseInt(event.target.value) / 100;
       },
 
-      searchBarGetLatLng() {
-
-      },
       async updateInfos({lat, lng}) {
         // ----- DarkSky -----
         this.embedURL = DarkSkyData.getEmbedURL(lat, lng);
         this.locationInformations.address = await DarkSkyData.getAddress(lat, lng);
         this.forecast = await DarkSkyData.getForecast(lat, lng);
-        this.weatherInfos.daily.tempMin.labels = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0]);
-        this.weatherInfos.daily.tempMin.data = this.forecast.daily.data.map( day => parseInt(day.temperatureMin - 32) * 5/9);
-        this.weatherInfos.daily.tempMax.labels = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0]);
-        this.weatherInfos.daily.tempMax.data = this.forecast.daily.data.map( day => parseInt(day.temperatureMax - 32) * 5/9);
-        this.weatherInfos.current.humidity = (this.forecast.currently.humidity * 100).toFixed(1) || null;
-        this.weatherInfos.current.windSpeed = this.forecast.currently.windSpeed * 1,852 || null;
-        this.weatherInfos.current.temp = ((this.forecast.currently.temperature - 32) * 5/9).toFixed(1) || null;
 
+        console.log('forecast', this.forecast);
+
+        if (this.forecast.error) {
+          console.log(`Error : ${this.forecast.error}`);
+        } else {
+
+          this.weatherInfos.daily.daysLabels = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0] );
+          this.weatherInfos.daily.daysSummary = this.forecast.daily.data.map( day => day.summary );
+          this.weatherInfos.daily.tempMin = this.forecast.daily.data.map( day => parseFloat(day.temperatureMin) );
+          this.weatherInfos.daily.tempMax = this.forecast.daily.data.map( day => parseFloat(day.temperatureMax) );
+          this.weatherInfos.daily.windBearing = this.forecast.daily.data.map( day => day.windBearing );
+          this.weatherInfos.daily.windSpeed = this.forecast.daily.data.map( day => day.windSpeed );
+          this.weatherInfos.daily.cloudCover = this.forecast.daily.data.map( day => day.cloudCover );
+          
+          this.weatherInfos.current.summary = this.forecast.currently.summary;
+          this.weatherInfos.current.humidity = (this.forecast.currently.humidity * 100).toFixed(1);
+          this.weatherInfos.current.windSpeed = this.forecast.currently.windSpeed;
+          this.weatherInfos.current.temp = this.forecast.currently.temperature;
+
+          console.log('weatherInfos', this.weatherInfos);
+        
+        }
 
         // -----sun & moon -----
         const astroInfos = await DataApi.getLocationInfos(this.location.lat, this.location.lng);
