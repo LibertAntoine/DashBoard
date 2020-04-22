@@ -37,10 +37,10 @@
 
                 <sui-grid-column>
                   <sui-segment>
-                    <sui-header size='large'> {{ this.locationInformations.address.name }} </sui-header>
-                    <sui-header size='small'> {{ this.locationInformations.address.street }} </sui-header>
+                    <sui-header size='large'> {{ locationInformations.address.name }} </sui-header>
+                    <sui-header size='small'> {{ locationInformations.address.street }} </sui-header>
                     <sui-statistic >
-                      <sui-statistic-value> {{ currentTemperature }} °C </sui-statistic-value>
+                      <sui-statistic-value> {{ weatherInfos.current.temp }} °C </sui-statistic-value>
                       <sui-statistic-label>temperature</sui-statistic-label>
                     </sui-statistic>
                   </sui-segment>
@@ -51,11 +51,11 @@
                     <sui-header size='large'> Details </sui-header>
                     <sui-statistics-group horizontal :columns='2'>
                       <sui-statistic in-group >
-                        <sui-statistic-value> {{ this.currentHumidity }} % </sui-statistic-value>
+                        <sui-statistic-value> {{ weatherInfos.current.humidity }} % </sui-statistic-value>
                         <sui-statistic-label> Humidity </sui-statistic-label>
                       </sui-statistic>
                       <sui-statistic in-group>
-                        <sui-statistic-value> {{ this.currentWindSpeed }} </sui-statistic-value>
+                        <sui-statistic-value> {{ weatherInfos.current.windSpeed }} </sui-statistic-value>
                         <sui-statistic-label> <span class="tiny">km/h</span> <br/> Windspeed </sui-statistic-label>
                       </sui-statistic>
                     </sui-statistics-group>
@@ -88,7 +88,7 @@
                   	 	 	 <sui-segment>
                     		 	 	 <MoonPhase
                       		 	 	 :testPercentage='MoonPhaseTestPercentage'
-                      		 	 	 width= '200px'
+                      		 	 	 width= 'auto'
                     			 	 	 />
                   	 	 	 </sui-segment>
 							 	 </sui-grid-column>
@@ -112,10 +112,10 @@
             <sui-segment>
               <GraphBar class="column" 
                 :datasets="[
-                { x: this.labelsMinTemp, y: this.datasetsMinTemp, type: 'bar', name: 'Min'},
-                { x: this.labelsMaxTemp, y: this.datasetsMaxTemp, type: 'bar', name: 'Max'}
+                { x: weatherInfos.daily.tempMin.labels, y: weatherInfos.daily.tempMin.data, type: 'bar', name: 'Min'},
+                { x: weatherInfos.daily.tempMax.labels, y: weatherInfos.daily.tempMax.data, type: 'bar', name: 'Max'}
                 ]"
-                :range='[Math.min(...this.datasetsMinTemp) - 5, Math.max(...this.datasetsMaxTemp)]'
+                :range='[Math.min(...weatherInfos.daily.tempMin.data) - 5, Math.max(...weatherInfos.daily.tempMax.data)]'
                 title='Temperature (°C)'
                 :height='300'
               />
@@ -186,16 +186,19 @@ export default {
       MoonPhaseTestPercentage: 0,
       address : '',
       forecast: null,
-      embedURL: '',
-      localisation : '',
-      labelsMinTemp : [],
-      datasetsMinTemp : [],
-      labelsMaxTemp : [],
-      datasetsMaxTemp : [],
-      currentHumidity : null,
-      currentSummary : null,
-      currentWindSpeed : null,
-      currentTemperature : null
+      weatherInfos: {
+        current: {
+          humidity: 0,
+          windSpeed: 0,
+          temp: 0
+        },
+        daily: {
+          tempMin: { labels: [], data: [] },
+          tempMax: { labels: [], data: [] },
+          windSpeed: { labels: [], data: [] },
+        }
+      },
+      embedURL: ''
     }
   },
 
@@ -251,14 +254,14 @@ export default {
         this.embedURL = DarkSkyData.getEmbedURL(lat, lng);
         this.locationInformations.address = await DarkSkyData.getAddress(lat, lng);
         this.forecast = await DarkSkyData.getForecast(lat, lng);
-        this.labelsMinTemp = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0]);
-        this.datasetsMinTemp = this.forecast.daily.data.map( day => parseInt(day.temperatureMin - 32) * 5/9);
-        this.labelsMaxTemp = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0]);
-        this.datasetsMaxTemp = this.forecast.daily.data.map( day => parseInt(day.temperatureMax - 32) * 5/9);
-        this.currentHumidity = (this.forecast.currently.humidity * 100).toFixed(1) || null;
-        this.currentSummary = this.forecast.currently.summary || null;
-        this.currentWindSpeed = this.forecast.currently.windSpeed * 1,852 || null;
-        this.currentTemperature = ((this.forecast.currently.temperature - 32) * 5/9).toFixed(1) || null;
+        this.weatherInfos.daily.tempMin.labels = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0]);
+        this.weatherInfos.daily.tempMin.data = this.forecast.daily.data.map( day => parseInt(day.temperatureMin - 32) * 5/9);
+        this.weatherInfos.daily.tempMax.labels = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0]);
+        this.weatherInfos.daily.tempMax.data = this.forecast.daily.data.map( day => parseInt(day.temperatureMax - 32) * 5/9);
+        this.weatherInfos.current.humidity = (this.forecast.currently.humidity * 100).toFixed(1) || null;
+        this.weatherInfos.current.windSpeed = this.forecast.currently.windSpeed * 1,852 || null;
+        this.weatherInfos.current.temp = ((this.forecast.currently.temperature - 32) * 5/9).toFixed(1) || null;
+
 
         // -----sun & moon -----
         const astroInfos = await DataApi.getLocationInfos(this.location.lat, this.location.lng);
