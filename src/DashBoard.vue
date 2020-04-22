@@ -205,9 +205,6 @@ export default {
   async created () {
     const getGeoloc = await DataApi.getLocation();
     this.location = getGeoloc || this.defaultLoc;
-    // update location information with our longitude & latitude
-    // const locationInformation = await DataApi.getLocationInfos(this.location.lat, this.location.lng);
-    // if (locationInformation) { this.locationInformation = locationInformation; } 
   },
 
   watch: { // define watcher on our location
