@@ -1,7 +1,7 @@
 <template>
 	<div class="line-chart-container">
 		<div class="toggle">
-			<input type="checkbox" v-model="line">Toggle overlay
+			<input type="checkbox" v-model="drawLine">Toggle overlay
 		</div>
 		<svg ref="svg" width="600" :height="height">
 		</svg>
@@ -40,24 +40,15 @@ export default {
 			drawLine: false
 		}
 	},
-	computed: {
-		line: {
-			set(value) {
-				this.drawLine = value
-			},
-			get() {
-				return this.drawLine
-			}
-		}
-	},
+
 	watch: {
 		async data(newData, oldData) {
 			this.animatedData = oldData;
-					console.log(this.line)
+					console.log(this.drawLine)
 			this.tweenDots()
 				.onComplete(() => {
-					console.log(this.line)
-					if (this.line) {
+					console.log(this.drawLine)
+					if (this.drawLine) {
 						this.buildPath()
 					}
 				});
