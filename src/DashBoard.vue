@@ -96,7 +96,7 @@
           <sui-segment>
             <sui-header size='medium'> Weekly maximum temperature </sui-header>
             <!--TODO bring actual dates in-->
-            <D3Line :data="weatherInfos.daily.tempMax" :height="350"/>
+            <D3Line :data="weatherInfos.daily.tempMax" :timeStamp="[1587592800, 1587679200, 1587765600, 1587852000, 1587938400, 1588024800, 1588111200, 1588197600]" :height="350"/>
           </sui-segment>
         </div>
       </div>
@@ -227,8 +227,7 @@ export default {
         this.embedURL = DarkSkyData.getEmbedURL(lat, lng);
         this.locationInformations.address = await DarkSkyData.getAddress(lat, lng);
         this.forecast = await DarkSkyData.getForecast(lat, lng);
-
-        console.log('forecast', this.forecast);
+        // console.log('forecast', this.forecast);
 
         if (this.forecast.error) {
           console.log(`Error : ${this.forecast.error}`);
@@ -248,9 +247,6 @@ export default {
           this.weatherInfos.current.humidity = (this.forecast.currently.humidity * 100).toFixed(1);
           this.weatherInfos.current.windSpeed = this.forecast.currently.windSpeed;
           this.weatherInfos.current.temp = this.forecast.currently.temperature;
-
-          console.log('weatherInfos', this.weatherInfos);
-        
         }
 
         // -----sun & moon -----
