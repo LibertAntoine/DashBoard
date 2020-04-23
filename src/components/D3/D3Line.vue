@@ -1,7 +1,7 @@
 <template>
 	<div class="line-chart-container">
 		<div class="toggle">
-			<input type="checkbox" v-model="line">Toggle overlay
+			<input type="checkbox" v-model="drawLine">Toggle overlay
 		</div>
 		<svg ref="svg" width="600" :height="height">
 		</svg>
@@ -11,17 +11,18 @@
 <script>
 import * as d3 from 'd3'
 import TWEEN from '@tweenjs/tween.js'
+import easingFunctions from '../../services/helpers/easingFunctions'
 
 export default {
 	name: 'D3Line',
 	props: { 
 		data: {
 			type: Array,
-			default: () => [10, 7, 12, 21, 20, 22, 24, 2, 8]
+			required: true
 		},
-		dataDate: {
+		timeStamp: {
 			type: Array,
-			default: () => [1122115, 115555111, 448484111, 554544411, 545555111, 11554545, 111111155, 11545488, 12222222]
+			require: true
 		},
 		height: {
 			type: Number,
@@ -37,30 +38,22 @@ export default {
 			dots: null,
 			circles: {},
 			range: [],
-			drawLine: false
+			drawLine: false,
+			animationInProgress: false
 		}
 	},
-	computed: {
-		line: {
-			set(value) {
-				this.drawLine = value
-			},
-			get() {
-				return this.drawLine
-			}
-		}
-	},
+
 	watch: {
 		async data(newData, oldData) {
-			this.animatedData = oldData;
-					console.log(this.line)
-			this.tweenDots()
-				.onComplete(() => {
-					console.log(this.line)
-					if (this.line) {
-						this.buildPath()
-					}
-				});
+			// console.log('data changed : ', newData);
+			const waintingCallAnim = () => { 
+				if ( !this.animationInProgress ) { // wait until current animation was done
+					this.animData();
+				}else {
+					setTimeout(() => waintingCallAnim(), 100);
+				}
+			}
+			waintingCallAnim(newData);
 		},
 		drawLine(newData, oldData) {
 			if (oldData === false)
@@ -71,14 +64,23 @@ export default {
 	},
 	async mounted() {
 		this.buildSVG();
-		await this.showDotsgradually()
-		this.tweenDots()
-			.onComplete(() => {
-				this.buildAxis();
-				this.buildLines();
-			})
+		// prevent animation & wrong scale if data is empty
+		if (this.data.length > 0) { this.animData(); }
 	},
 	methods: {
+		async animData() {
+			this.animatedData = [] // reset animatedData
+			this.animationInProgress = true; // lock for new incoming data
+			this.scaleX = d3.scaleBand().range([50, 590]).domain(this.data.map((el, i) => i))
+			await this.showDotsgradually();
+			// console.log('after showDotsgradually');
+			this.tweenDots().onComplete(() => {
+				// console.log('after tweenDots');
+				this.buildAxis();
+				this.buildLines();
+				this.animationInProgress = false; // unlock
+			})
+		},
 		buildLines() {
 			const lines = d3.range(5, 40, 5);
 
@@ -131,18 +133,21 @@ export default {
 				.start()
 		},
 		showDotsgradually() {
+			const constPushValue = (i) => {
+				this.animatedData.push(15);
+				// console.log(`${i}:animatedData`, this.animatedData);
+				this.buildDots();
+			}
+			const timeOffset = 500;
+			const animationDuration = 3000;
 			return new Promise(resolve => {
 				setTimeout(() => {
 					for (let i = 0; i < this.data.length; i++) {
-						setTimeout(async () => {
-							this.animatedData.push(15);
-							this.buildDots();
-
-							if (this.animatedData.length === this.data.length)
-								resolve();
-						}, ((800 / this.data.length) - i * 20) * i);
+						// console.log('delay:',(animationDuration / this.data.length) * easingFunctions.outSine(i / this.data.length));
+						setTimeout(() => constPushValue(i), (animationDuration / this.data.length) * easingFunctions.outSine(i / this.data.length));		
 					}
-				}, 1500)
+					setTimeout( () => resolve(), animationDuration / this.data.length);
+				}, timeOffset);
 			})
 		},
 		buildPath() {
@@ -206,7 +211,7 @@ export default {
 				.call(g => g.selectAll('line').remove())
 
 
-			const dateScale = d3.scalePoint(this.dataDate, [this.scaleX(0), this.scaleX(this.data.length -1)]);
+			const dateScale = d3.scalePoint(this.timeStamp, [this.scaleX(0), this.scaleX(this.data.length -1)]);
 			//const size = this.scaleX(this.data.length - 1) - this.scaleX(0);
 
 			d3.json("https://cdn.jsdelivr.net/npm/d3-time-format@2/locale/fr-FR.json")
@@ -234,40 +239,34 @@ export default {
 
 		},
 		buildDots() {
-			this.dots = d3.select(this.$refs.svg).selectAll('g.dot')
-				.data(this.animatedData);
-
-			// NOTE dots that are no longer here
+			this.dots = d3.select(this.$refs.svg).selectAll('g.dot').data(this.animatedData);
+			//console.log('this.dots', this.dots);
+			
 			this.dots.exit().remove();
-
-			// NOTE new dots
-			const g = this.dots.enter()
+			
+			const newDotGroup = this.dots.enter() // NOTE new dot
 					.append('g')
 					.classed('dot', true)
 					.on('mouseover', this.dotMouseover)
 					.on('mouseleave', this.dotMouseleave)
 
-			// NOTE second dot (not visible dot)
-			g.append('circle')
+			newDotGroup.append('circle') // NOTE second dot (not visible dot)
 				.attr('class', "hover") 
 			//.attr('r', 0)
 			//.transition().duration(800)
 				.attr('r', 11)
 				.attr('opacity', 0.1)
 
-			// NOTE first dot (visible dot)
-			g.append('circle')
+			newDotGroup.append('circle') // NOTE first dot (visible dot)
 					.attr('class', "visible")
 					.attr('r', 9)
 					.transition().duration(800)
 					.attr('r', 4)
 
-
-			// NOTE new and updated dots
-			this.dots.merge(g)
-				.attr('transform', (d, i) => {
+			this.dots.merge(newDotGroup).attr('transform', (d, i) => { // NOTE update dots
+					// console.log(`d: ${d} i:${i}`);
 					return `translate(${this.scaleX(i)}, ${this.scaleY(d)})`
-				})
+			})
 		},
 		dotMouseover(d, i, nodes) {
 			d3.select(nodes[i]).select(".hover")
@@ -333,11 +332,9 @@ export default {
 				.attr("stop-color", "#0083c4")
 				.attr("stop-opacity", 0);
 
-			this.scaleX = d3.scaleBand().range([50, 590]).domain(this.data.map((el, i) => i))
 			this.rangeY = d3.scaleLinear().range([this.height, 0]);
 			this.scaleY = this.rangeY.domain([0, 40]);
-			this.path = d3.select(this.$refs.svg)
-				.append('path');
+			this.path = d3.select(this.$refs.svg).append('path');
 		},
 		update() {
 			this.path.attr('d', this.createPath());

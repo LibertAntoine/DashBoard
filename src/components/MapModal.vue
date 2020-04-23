@@ -86,20 +86,20 @@ export default {
             this.toggle();
         },
         clickEvent (e) {
-            this.setSelectedLocation(e.latlng);
+            this.setSelectedLocation(e.latlng.lat, e.latlng.lng);
         },
         mapReady (map) {
             map.on('click', this.clickEvent); // registerClickEvent
             this.updateMapDisplay = () => map.invalidateSize();
         },
         setSelectedLocation(lat, lng) {
-            this.selectedLocation = (lat instanceof latLng) ? lat : latLng(lat, lng);
+            this.selectedLocation = latLng(lat, lng);
             this.$emit('updated', this.selectedLocation.lat, this.selectedLocation.lng);
         },
         async geolocate() {
             const location = await DataApi.getLocation();
             if (location) { 
-                this.setSelectedLocation(location.latitude, location.longitude);
+                this.setSelectedLocation(location.lat, location.lng);
             }
         }
     }

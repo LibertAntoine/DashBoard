@@ -99,12 +99,12 @@
           <sui-segment>
             <sui-header size='medium'> Weekly maximum temperature </sui-header>
             <!--TODO bring actual dates in-->
-            <D3Line :data="weatherInfos.daily.tempMax" :height="350"/>
+            <D3Line :data="weatherInfos.daily.tempMax" :timeStamp="[1587592800, 1587679200, 1587765600, 1587852000, 1587938400, 1588024800, 1588111200, 1588197600]" :height="350"/>
           </sui-segment>
         </div>
       </div>
 
-      <RainModal :forecast="forecast" ref='rainModal'/>
+      <RainModal :timestamp="weatherInfos.daily.daysTimestamp" :precipIntensity="weatherInfos.daily.precipIntensity" ref='rainModal'/>
       <MapModal ref='mapModal' @select='updateLocationFromModal'/>
     </div>
   </div>
@@ -170,12 +170,14 @@ export default {
         },
         daily: {
           daysLabels: [],
+          daysTimestamp: [],
           daysSummary: [],
           tempMin: [],
           tempMax: [],
           windBearing: [],
           windSpeed: [],
-          cloudCover: []
+          cloudCover: [],
+          precipIntensity: []
         }
       },
       embedURL: ''
@@ -228,28 +230,26 @@ export default {
         this.embedURL = DarkSkyData.getEmbedURL(lat, lng);
         this.locationInformations.address = await DarkSkyData.getAddress(lat, lng);
         this.forecast = await DarkSkyData.getForecast(lat, lng);
-
-        console.log('forecast', this.forecast);
+        // console.log('forecast', this.forecast);
 
         if (this.forecast.error) {
           console.log(`Error : ${this.forecast.error}`);
         } else {
 
           this.weatherInfos.daily.daysLabels = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0] );
+          this.weatherInfos.daily.daysTimestamp = this.forecast.daily.data.map( day => day.time );
           this.weatherInfos.daily.daysSummary = this.forecast.daily.data.map( day => day.summary );
           this.weatherInfos.daily.tempMin = this.forecast.daily.data.map( day => parseFloat(day.temperatureMin) );
           this.weatherInfos.daily.tempMax = this.forecast.daily.data.map( day => parseFloat(day.temperatureMax) );
           this.weatherInfos.daily.windBearing = this.forecast.daily.data.map( day => day.windBearing );
           this.weatherInfos.daily.windSpeed = this.forecast.daily.data.map( day => day.windSpeed );
           this.weatherInfos.daily.cloudCover = this.forecast.daily.data.map( day => day.cloudCover );
+          this.weatherInfos.daily.precipIntensity = this.forecast.daily.data.map( day => day.cloudCover );
           
           this.weatherInfos.current.summary = this.forecast.currently.summary;
           this.weatherInfos.current.humidity = (this.forecast.currently.humidity * 100).toFixed(1);
           this.weatherInfos.current.windSpeed = this.forecast.currently.windSpeed;
           this.weatherInfos.current.temp = this.forecast.currently.temperature;
-
-          console.log('weatherInfos', this.weatherInfos);
-        
         }
 
         // -----sun & moon -----
