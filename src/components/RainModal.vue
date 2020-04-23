@@ -8,9 +8,9 @@
 			  </div>
         </div>
 		  	  <div class="slider">
-		  	  	0  <input type="range" v-model="this.maxVal" id="volume" min="5" max="40">  40
+		  	  	0  <input type="range" v-model="maxVal" id="volume" min="5" max="40">  40
 				<br>
-		  	  	range goes from 0 to {{ this.maxVal }}mm
+		  	  	range goes from 0 to {{ maxVal }}mm
 		  	  </div>
 	</div>
         <template v-slot:actions>
