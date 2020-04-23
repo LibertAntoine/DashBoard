@@ -3,9 +3,11 @@
 
     <!-- ----- MENU ----- -->
     <div id='menu'>
-      <h1 id='title'>Weather Board</h1>  
+      <h1 id='title'>Weather Board</h1>
+      <label for="hamburger">&#9776;</label>
+      <input type="checkbox" id="hamburger"/>
       <sui-menu floated='right' compact class='basic-nav' >
-      
+        
           <sui-menu-item>
            
             <sui-input transparent 
@@ -311,6 +313,14 @@ export default {
   padding: 0 5%;
   }
 
+  #menu label, #hamburger {
+  display: none;
+  float: right;
+  position: absolute;
+  right: 0;
+  top: 0;
+  }
+
   #title {
   font-family: Butler;
   font-size: 3em;
@@ -415,25 +425,80 @@ export default {
   /*RESPONSIVE*/
 
   @media (max-width: 1024px) {
-      #app .ui.statistic>.value, #app .ui.statistics .statistic>.value{
-         font-size: 3em !important;
-      }
+  #app .ui.statistic>.value, #app .ui.statistics .statistic>.value{
+  font-size: 3em !important;
+  }
 
-      .rows > .ui.segment{
-        background-position: right 0% bottom 50%;
-      }
-      
-      #first-row > .ui.segment{
-        height: 200px;
-     }
-     
-     #graphs{
-      height: 500px;
-     }
+  .rows > .ui.segment{
+  background-position: right 0% bottom 50%;
+  }
+
+  #first-row > .ui.segment{
+  height: 200px;
+  }
+
+  #graphs{
+  flex-direction: column;
   }
   
-   @media (max-width: 450px) {
-   
-   }
+  #left{
+  width: 100%;
+  }
+
+  #right {
+  display: inline-flex;
+  margin-top: 20px;
+  width: 100%;
+  }
+
+  #right > .ui.segment{
+  margin: 0;
+  width: 50%;
+  }
+  }
+
+  @media (max-width: 450px) {
+
+  #menu label {
+  display: inline-block;
+  color: #f4f5f6;
+  background: #2b2b3a;
+  font-style: normal;
+  font-size: 1.2em;
+  padding: 10px;
+  }
+
+  .basic-nav{
+  display: none !important;
+  }
+  #menu input:checked ~ .basic-nav {
+  display: inline-flex !important;
+  }
+
+  #basic-infos > .ui.segment{
+  height: 50px;
+  padding: 2px;
+  }
+
+  #app .ui.statistic>.value, #app .ui.statistics .statistic>.value{
+  font-size: 1em !important;
+  }
+  .ui.large.header{
+  font-size: 1em !important;
+  }
+
+  .ui.large.header {
+  font-size: 1em;
+  margin-bottom: 5px;
+  }
+
+  #first-row > .ui.segment{
+  height: 120px;
+  }
+
+  #title{
+  font-size: 2.5em;
+  }
+  }
 
 </style>

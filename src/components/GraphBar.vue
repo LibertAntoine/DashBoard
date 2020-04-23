@@ -59,4 +59,17 @@ export default {
 #graph {
     padding-top : - 30px;
 }
+
+ @media (max-width: 1024px) {
+#graphBar {
+    width: 45%;
+    margin-right: 5%;
+    }
+}
+ @media (max-width: 450px) {
+ #graphBarTitle {
+    margin-left : 0px;
+    font-size : 1em;
+}
+ }
 </style>
