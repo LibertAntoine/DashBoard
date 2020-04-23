@@ -2,13 +2,13 @@
     <SuiModal class="modal-rain" ref='modal' :title='"Rain gauges for the week"'>
 	<div class="pluviometer-modal">
         <div class="pluviometers-container">
-		  	  <div class="pluviometer-day" v-for="(day, index) in forecast.daily.data" :key="index" >
-			  	  <Pluviometre :max="maxVal" :mm="day.precipIntensityMax * 24" ref='pluviometre'/>
-				  <div class="day">{{ time(day) }}</div>
+		  	  <div class="pluviometer-day" v-for="(t, index) in time" :key="index" >
+			  	  <Pluviometre :max="maxVal" :mm="precipIntensity[index] * 24" ref='pluviometre'/>
+				  <div class="day">{{ t }}</div>
 			  </div>
         </div>
 		  	  <div class="slider">
-		  	  	0  <input type="range" v-model="max" id="volume" min="5" max="40">  40
+		  	  	0  <input type="range" v-model="this.maxVal" id="volume" min="5" max="40">  40
 				<br>
 		  	  	range goes from 0 to {{ this.maxVal }}mm
 		  	  </div>
@@ -39,29 +39,25 @@ export default {
 		}
 	},
 	computed: {
-		max: {
-			set(newMax) {
-				this.maxVal = parseInt(newMax);
-			},
-			get() {
-				return this.maxVal;
-			}
+		time() {
+			const dates = this.timestamp.map(ts => new Date(ts * 1000));
+			const week = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+			const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			return dates.map(d => `${week[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`);
 		}
 	},
 	props: {
-		forecast: {
-			type: Object,
-			default: () => {}
-		} 
+		timestamp: {
+			type: Array,
+			required: true
+		},
+		precipIntensity: {
+			type: Array,
+			required: true
+		}
+
 	},
 	methods: {
-		time(data) {
-			const date = new Date(data.time * 1000);
-			const week = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
-			const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-			// DEBUG TODO weekdays are shifted
-			return week[date.getDay()]+" "+date.getUTCDate()+" "+months[date.getMonth()]
-		},
 		animate() {
 			this.$refs.pluviometre.forEach(rain => rain.setTo0())
 			this.$refs.pluviometre.forEach((rain, i) => {

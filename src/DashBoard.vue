@@ -101,7 +101,7 @@
         </div>
       </div>
 
-      <RainModal :forecast="forecast" ref='rainModal'/>
+      <RainModal :timestamp="weatherInfos.daily.daysTimestamp" :precipIntensity="weatherInfos.daily.precipIntensity" ref='rainModal'/>
       <MapModal ref='mapModal' @select='updateLocationFromModal'/>
     </div>
   </sui-container>
@@ -167,12 +167,14 @@ export default {
         },
         daily: {
           daysLabels: [],
+          daysTimestamp: [],
           daysSummary: [],
           tempMin: [],
           tempMax: [],
           windBearing: [],
           windSpeed: [],
-          cloudCover: []
+          cloudCover: [],
+          precipIntensity: []
         }
       },
       embedURL: ''
@@ -233,12 +235,14 @@ export default {
         } else {
 
           this.weatherInfos.daily.daysLabels = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0] );
+          this.weatherInfos.daily.daysTimestamp = this.forecast.daily.data.map( day => day.time );
           this.weatherInfos.daily.daysSummary = this.forecast.daily.data.map( day => day.summary );
           this.weatherInfos.daily.tempMin = this.forecast.daily.data.map( day => parseFloat(day.temperatureMin) );
           this.weatherInfos.daily.tempMax = this.forecast.daily.data.map( day => parseFloat(day.temperatureMax) );
           this.weatherInfos.daily.windBearing = this.forecast.daily.data.map( day => day.windBearing );
           this.weatherInfos.daily.windSpeed = this.forecast.daily.data.map( day => day.windSpeed );
           this.weatherInfos.daily.cloudCover = this.forecast.daily.data.map( day => day.cloudCover );
+          this.weatherInfos.daily.precipIntensity = this.forecast.daily.data.map( day => day.cloudCover );
           
           this.weatherInfos.current.summary = this.forecast.currently.summary;
           this.weatherInfos.current.humidity = (this.forecast.currently.humidity * 100).toFixed(1);
