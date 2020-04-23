@@ -64,11 +64,11 @@ export default {
     props: {
         fillColor: {
             type: String,
-            default: '#f77a52'
+            default: '#f4901e'
         },
         emptyColor: {
             type: String,
-            default: '#555555'
+            default: '#254558'
         },
         backgroundColor: {
             type: String,

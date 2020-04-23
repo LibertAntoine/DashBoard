@@ -1,10 +1,11 @@
 <template>
-  <sui-container fluid id='app'>
+  <div id='app'>
 
     <!-- ----- MENU ----- -->
-    <sui-segment clearing id='menu'>
+    <div id='menu'>
       <h1 id='title'>Weather Board</h1>  
-      <sui-menu floated='right' compact>
+      <sui-menu floated='right' compact class='basic-nav' >
+      
           <sui-menu-item>
            
             <sui-input transparent 
@@ -18,7 +19,7 @@
           </sui-menu-item>
           <sui-menu-item right> <sui-button icon='map' @click.prevent='$refs.mapModal.toggle'/> </sui-menu-item>
       </sui-menu>
-    </sui-segment>
+    </div>
 
     <sui-divider />
 
@@ -61,7 +62,7 @@
               :title='"Moon"'
               :sunriseHours='locationInformations.moonrise || "00:00"'
               :sunsetHours='locationInformations.moonset || "00:00"'
-              :fillColor='"23242f"'
+              :fillColor='"254558"'
                         />
         </sui-segment>
         <sui-segment>
@@ -104,7 +105,7 @@
       <RainModal :forecast="forecast" ref='rainModal'/>
       <MapModal ref='mapModal' @select='updateLocationFromModal'/>
     </div>
-  </sui-container>
+  </div>
 </template>
 
 <script>
@@ -250,19 +251,30 @@ export default {
         }
 
         // -----sun & moon -----
-        const astroInfos = await DataApi.getLocationInfos(this.location.lat, this.location.lng);
-        if (astroInfos) { 
-          this.locationInformations = {
-            ...this.locationInformations, 
-            sunset: astroInfos.sunset,
-            sunrise: astroInfos.sunrise,
-            moonset: astroInfos.moonset,
-            moonrise: astroInfos.moonrise
-          }
-        }
-      }
+  const astroInfos = await DataApi.getLocationInfos(this.location.lat, this.location.lng);
+  if (astroInfos) {
+  this.locationInformations = {
+  ...this.locationInformations,
+  sunset: astroInfos.sunset,
+  sunrise: astroInfos.sunrise,
+  moonset: astroInfos.moonset,
+  moonrise: astroInfos.moonrise
   }
-}
+  }
+  }
+  }
+  }
+
+  /*NAVIGATION HAMBURGER*/
+
+  /*function hamburger() {
+  var x = document.getElementById("menu");
+  if (x.className === "basic-nav") {
+  x.className += " responsive";
+  } else {
+  x.className = "basic-nav";
+  }
+  }*/
 </script>
 
 <style>
@@ -282,6 +294,12 @@ export default {
   #app {
   padding: 30px;
   background-color : #f4f5f6;
+  }
+
+  .ui.modal>.header, .ui.button, .ui.header,
+  .ui.statistic>.value, .ui.statistics .statistic>.value{
+  font-family: 'Karla' !important;
+  color: #2b2b3a !important;
   }
 
   /*MENU*/
@@ -307,6 +325,7 @@ export default {
   #content{
   text-align: center;
   font-family: Karla;
+  color: #2b2b3a;
   }
 
   h2{
@@ -379,18 +398,42 @@ export default {
   #first-row > .ui.segment > .display:first-child{
   margin-bottom: 10px !important;
   }
-  
+
   #graphs{
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
   }
-  
+
   #right{
   width: 30%;
   }
-  
+
   #left{
   width: 65%;
   }
+
+  /*RESPONSIVE*/
+
+  @media (max-width: 1024px) {
+      #app .ui.statistic>.value, #app .ui.statistics .statistic>.value{
+         font-size: 3em !important;
+      }
+
+      .rows > .ui.segment{
+        background-position: right 0% bottom 50%;
+      }
+      
+      #first-row > .ui.segment{
+        height: 200px;
+     }
+     
+     #graphs{
+      height: 500px;
+     }
+  }
+  
+   @media (max-width: 450px) {
+   
+   }
 
 </style>

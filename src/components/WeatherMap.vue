@@ -1,5 +1,5 @@
 <template>
-  <div id="weatherMap" :style="'width: 100%; height:' + (parseInt(height) + 58) + 'px;'">
+  <div id="weatherMap" >
       <h2 id="mapTitle">{{ title }}</h2>
       <iframe
           id="map-embed-iframe"
@@ -23,15 +23,17 @@ export default {
 </script>
 
 <style>
-#weatherMap {
+  #weatherMap {
   background-color : white;
-  padding : 5px;
+  box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  padding: 1em 1em;
   border-radius: .28571429rem;
-  box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
-}
+  border: 1px solid rgba(34,36,38,.15);
+  height: 100%;
+  }
 
-#mapTitle {
+  #mapTitle {
   margin-left : 10px;
   margin-top : 3px;
-}
+  }
 </style>

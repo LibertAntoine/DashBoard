@@ -83,7 +83,7 @@ export default {
         },
         fillColor: {
             type: String,
-            default: '#f77a52'
+            default: '#f4901e'
         },
         backgroundColor: {
             type: String,
@@ -124,9 +124,9 @@ export default {
     .title, .time, .sunriseHours, .sunsetHours {
         position: absolute;
         margin: 0;
-        font-family: 'Playfair Display', serif;
+        font-family: Karla;
         font-size: calc(1.5em + 0.1vw);
-        color: #5e5e5e;
+        color: #2b2b3a;
     }
 
     .title {
@@ -176,7 +176,7 @@ export default {
     }
 
     .curveFill {
-        stroke: #e6e6e6;
+        stroke: #f4f5f6;
     }
 
 </style>
