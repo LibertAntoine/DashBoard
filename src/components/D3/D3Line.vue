@@ -3,7 +3,7 @@
 		<div class="toggle">
 			<input type="checkbox" v-model="drawLine">Toggle overlay
 		</div>
-		<svg ref="svg" width="600" :height="height">
+		<svg ref="svg" id="svg">
 		</svg>
 	</div>
 </template>
@@ -20,13 +20,32 @@ export default {
 			type: Array,
 			required: true
 		},
-		timeStamp: {
+		timestamp: {
 			type: Array,
 			require: true
 		},
 		height: {
 			type: Number,
-			default: () => 500
+			default: 400
+		},
+		width: {
+			type: Number,
+			default: 600
+		}
+	},
+
+	computed: {
+		aspect () { return this.width / this.height },
+		time() {
+			if ( this.timestamp.length > 0) {
+				const dates = this.timestamp.map(ts => new Date(ts * 1000));
+				const week = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+				const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+				return dates.map(d => `${week[d.getDay()]} ${d.getDate()}`);
+			} else {
+				return []
+			}
+			
 		}
 	},
 	data() {
@@ -71,7 +90,7 @@ export default {
 		async animData() {
 			this.animatedData = [] // reset animatedData
 			this.animationInProgress = true; // lock for new incoming data
-			this.scaleX = d3.scaleBand().range([50, 590]).domain(this.data.map((el, i) => i))
+			this.scaleX = d3.scaleBand().range([50, this.width + 50]).domain(this.data.map((el, i) => i))
 			await this.showDotsgradually();
 			// console.log('after showDotsgradually');
 			this.tweenDots().onComplete(() => {
@@ -82,6 +101,8 @@ export default {
 			})
 		},
 		buildLines() {
+
+			d3.select(this.$refs.svg).selectAll(".line").remove();
 			const lines = d3.range(5, 40, 5);
 
 			const size = this.scaleX(this.data.length - 1) - this.scaleX(0);
@@ -193,7 +214,9 @@ export default {
 				//.remove()
 		},
 		buildAxis() {
-			const scale = d3.scalePoint().domain(d3.range(5, 40, 5)).range([this.height - this.height/6, this.height/6])
+
+			d3.select(this.$refs.svg).selectAll(".x_axis").remove();
+			const scale = d3.scalePoint().domain(d3.range(5, 40, 5)).range([this.height - this.height/8, this.height/8])
 
 			const y_axis = d3.axisLeft(scale)
 				.tickPadding(-6)
@@ -210,33 +233,13 @@ export default {
 				.call(g => g.select('.domain').remove())
 				.call(g => g.selectAll('line').remove())
 
+			const dateScale = d3.scaleBand().range([10, this.width + 10]).domain(this.time);			
 
-			const dateScale = d3.scalePoint(this.timeStamp, [this.scaleX(0), this.scaleX(this.data.length -1)]);
-			//const size = this.scaleX(this.data.length - 1) - this.scaleX(0);
-
-			d3.json("https://cdn.jsdelivr.net/npm/d3-time-format@2/locale/fr-FR.json")
-				.then(locale => {
-					const fr = d3.timeFormatDefaultLocale(locale);
-
-					const x_axis = d3.axisBottom(dateScale)
-						.tickFormat(fr.format("%d %b"))
-						//.tickSize([10])
-
-					const height = d3.select(this.$refs.svg)
-						.node().height.baseVal.value;
-
-					const x_axisEl = d3.select(this.$refs.svg)
-
-					x_axisEl.append('g')
-						.attr('class', "x_axis")
-					//.attr('style', "font-size: 1em")
-						.attr('transform', `translate(0, ${height - 30})`)
-						.call(x_axis)
-						.call(g => g.select('.domain').remove())
-				})
-				.catch(err => console.log(err))
-
-
+			d3.select(this.$refs.svg).append('g')
+				.attr('class', "x_axis")
+				.attr('transform', `translate(0, ${this.height - 30})`)
+				.call(d3.axisBottom(dateScale))
+				.call(g => g.select('.domain').remove())
 		},
 		buildDots() {
 			this.dots = d3.select(this.$refs.svg).selectAll('g.dot').data(this.animatedData);
@@ -299,7 +302,14 @@ export default {
 				.attr('opacity', 0.1)
 		},
 		buildSVG() {
-			const defs = d3.select(this.$refs.svg).append("defs");
+			const svg = d3.select(this.$refs.svg);
+			const container = d3.select('.line-chart-container');
+			svg.attr("viewBox", "0 0 " + this.width + " " + this.height)
+				.attr("preserveAspectRatio", "xMinYMid")
+				.call(this.resizeSvg);
+			d3.select(window).on("resize." + container.attr("id"), () => this.resizeSvg(svg));
+
+			const defs = svg.append("defs");
 
 			const gradient = defs.append("linearGradient")
 				.attr("id", "svgGradient")
@@ -334,7 +344,14 @@ export default {
 
 			this.rangeY = d3.scaleLinear().range([this.height, 0]);
 			this.scaleY = this.rangeY.domain([0, 40]);
-			this.path = d3.select(this.$refs.svg).append('path');
+			this.path = svg.append('path');
+		},
+
+		resizeSvg(svg) {
+			console.log('resizeSvg');
+			const targetWidth = parseInt(d3.select('.line-chart-container').node().getBoundingClientRect().width);
+			svg.attr("width", targetWidth);
+			svg.attr("height", Math.round(targetWidth / this.aspect));
 		},
 		update() {
 			this.path.attr('d', this.createPath());

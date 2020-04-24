@@ -103,7 +103,7 @@
           <sui-segment id='wtemp'>
             <h2> Weekly maximum temperature </h2>
             <!--TODO bring actual dates in-->
-            <D3Line :data="weatherInfos.daily.tempMax" :timeStamp="[1587592800, 1587679200, 1587765600, 1587852000, 1587938400, 1588024800, 1588111200, 1588197600]" :height="350"/>
+            <D3Line :data="weatherInfos.daily.tempMax" :timestamp="[1587592800, 1587679200, 1587765600, 1587852000, 1587938400, 1588024800, 1588111200, 1588197600]" />
           </sui-segment>
         </div>
       </div>
