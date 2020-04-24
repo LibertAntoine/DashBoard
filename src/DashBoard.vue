@@ -88,16 +88,20 @@
         <div id='right'>
           <GraphBar class="column"
                 :datasets="[
-                { x: weatherInfos.daily.daysLabels, y: weatherInfos.daily.tempMin, type: 'bar', name: 'Min'},
-                { x: weatherInfos.daily.daysLabels, y: weatherInfos.daily.tempMax, type: 'bar', name: 'Max'}
+                { x: weatherInfos.daily.daysLabels, y: weatherInfos.daily.tempMin, type: 'bar', name: 'Min', 
+                marker: {
+                  color: '#254558'}},
+                { x: weatherInfos.daily.daysLabels, y: weatherInfos.daily.tempMax, type: 'bar', name: 'Max',
+                marker: {
+                  color: '#F4901E'}}
                 ]"
                 :range='[Math.min(...weatherInfos.daily.tempMin) - 5, Math.max(...weatherInfos.daily.tempMax)]'
                 title='Temperature (°C)'
                 :height='300'
               />
 
-          <sui-segment>
-            <sui-header size='medium'> Weekly maximum temperature </sui-header>
+          <sui-segment id='wtemp'>
+            <h2> Weekly maximum temperature </h2>
             <!--TODO bring actual dates in-->
             <D3Line :data="weatherInfos.daily.tempMax" :timeStamp="[1587592800, 1587679200, 1587765600, 1587852000, 1587938400, 1588024800, 1588111200, 1588197600]" :height="350"/>
           </sui-segment>
@@ -422,6 +426,16 @@ export default {
   width: 65%;
   }
 
+  #right h2{
+  margin-left: 10px;
+  margin-top: 3px;
+  font-size: 1.71428571rem;
+  }
+
+  #wtemp{
+  padding: 5px;
+  }
+
   /*RESPONSIVE*/
 
   @media (max-width: 1024px) {
@@ -440,12 +454,14 @@ export default {
   #graphs{
   flex-direction: column;
   }
-  
+
   #left{
   width: 100%;
+  height: 400px;
   }
 
   #right {
+  height: 400px;
   display: inline-flex;
   margin-top: 20px;
   width: 100%;
@@ -481,7 +497,11 @@ export default {
   }
 
   #app .ui.statistic>.value, #app .ui.statistics .statistic>.value{
-  font-size: 1em !important;
+  font-size: 2em !important;
+  font-variant: unicase;
+  }
+  .tiny {
+  font-size: 0.59em;
   }
   .ui.large.header{
   font-size: 1em !important;
@@ -492,12 +512,38 @@ export default {
   margin-bottom: 5px;
   }
 
+  #first-row{
+  flex-wrap: wrap;
+  }
+
   #first-row > .ui.segment{
   height: 120px;
+  width: 47.5%;
+  }
+
+  #first-row > .ui.segment:first-child{
+    width: 100%;
   }
 
   #title{
   font-size: 2.5em;
+  }
+
+  #right{
+  flex-direction: column;
+  height: inherit;
+  }
+
+  #graphBar, #right > .ui.segment{
+  width: 100%;
+  }
+
+  #right > .ui.segment{
+  margin-top: 20px;
+  }
+
+  #right h2{
+  font-size: 1em;
   }
   }
 

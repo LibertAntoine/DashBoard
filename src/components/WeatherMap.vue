@@ -1,6 +1,5 @@
 <template>
   <div id="weatherMap" >
-      <h2 id="mapTitle">{{ title }}</h2>
       <iframe
           id="map-embed-iframe"
           frameborder="0"
@@ -31,9 +30,8 @@ export default {
   border: 1px solid rgba(34,36,38,.15);
   height: 100%;
   }
-
-  #mapTitle {
-  margin-left : 10px;
-  margin-top : 3px;
-  }
+  
+  iframe{
+    height: 100%;
+   }
 </style>

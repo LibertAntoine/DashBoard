@@ -350,23 +350,28 @@ export default {
 </script>
 
 <style lang="less">
-.line-chart-container {
-	.toggle {
-		margin: auto;
-		input {
-			margin-right: 15px;
-		}
-	}
+  .line-chart-container {
+  height: 300px;
+  width: 100%;
 
-	svg {
-		/*background: lightgray;*/
+  .toggle {
+  margin: auto;
+  input {
+  margin-right: 15px;
+  }
+  }
 
-		path {
-			fill: none;
-			stroke-width: 4px;
-			stroke: lightseagreen;
+  svg {
+  /*background: lightgray;*/
+  height: 100%;
+  width: 100%;
 
-			&.area {
+  path {
+  fill: none;
+  stroke-width: 4px;
+  stroke: lightseagreen;
+
+  &.area {
 				fill: url(#svgGradient);
 				stroke: none;
 			}

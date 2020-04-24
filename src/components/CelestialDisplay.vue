@@ -108,75 +108,109 @@ export default {
 <style scoped>
     @import url('https://fonts.googleapis.com/css?family=Playfair+Display&display=swap');
 
-    .display {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border-radius: 10px;
-        /* offset-x | offset-y | blur-radius | color */
-        box-shadow: 2vw 2vw 6vw #dddddd;
-        padding: 2em;
-        
-    }
+  .display {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  /* offset-x | offset-y | blur-radius | color */
+  box-shadow: 2vw 2vw 6vw #dddddd;
+  padding: 2em;
 
-    .title, .time, .sunriseHours, .sunsetHours {
-        position: absolute;
-        margin: 0;
-        font-family: Karla;
-        font-size: calc(1.5em + 0.1vw);
-        color: #2b2b3a;
-    }
+  }
 
-    .title {
-        top: 5%;
-    }
-    .time {
-        top: 40%;
-    }
-    .sunriseHours {
-        left: 5%;
-        bottom: 5%;
-    }
-    .sunsetHours {
-        right: 5%;
-        bottom: 5%;
-    }
+  .title, .time, .sunriseHours, .sunsetHours {
+  position: absolute;
+  margin: 0;
+  font-family: Karla;
+  font-size: calc(1.5em + 0.1vw);
+  color: #2b2b3a;
+  }
 
-    .svgContainter {
-        position: relative;
-        height: 0;
-        width: 100%;
-        padding: 0;
-        padding-bottom: 20%; /* aspect ratio of our viewBox svg; */
-        vertical-align: middle;
-        overflow: hidden;
-    }
+  .title {
+  top: 5%;
+  }
+  .time {
+  top: 40%;
+  }
+  .sunriseHours {
+  left: 5%;
+  bottom: 5%;
+  }
+  .sunsetHours {
+  right: 5%;
+  bottom: 5%;
+  }
 
-    .sunSvg {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        padding: 0;
-        margin: 0;
-        /* border: thin dotted darkgrey;  for help debug*/ 
-    }
-    .curve, .curveFill {
-        fill: none;
-        stroke-width: 5px;
-        stroke-linecap: round;
-    }
+  .svgContainter {
+  position: relative;
+  height: 0;
+  width: 100%;
+  padding: 0;
+  padding-bottom: 20%; /* aspect ratio of our viewBox svg; */
+  vertical-align: middle;
+  overflow: hidden;
+  }
 
-    .curve {
-        transition-duration: 1s;
-        transition-property: strokeDashoffset;
-    }
+  .sunSvg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  padding: 0;
+  margin: 0;
+  /* border: thin dotted darkgrey;  for help debug*/
+  }
+  .curve, .curveFill {
+  fill: none;
+  stroke-width: 5px;
+  stroke-linecap: round;
+  }
 
-    .curveFill {
-        stroke: #f4f5f6;
-    }
+  .curve {
+  transition-duration: 1s;
+  transition-property: strokeDashoffset;
+  }
+
+  .curveFill {
+  stroke: #f4f5f6;
+  }
+
+  @media (max-width: 1024px) {
+  .display{
+  padding: 1.5em;
+  }
+  }
+
+  @media (max-width: 450px) {
+  .display{
+  width: 100%;
+  height: 50%;
+  padding: 0;
+  }
+
+  .title{
+  font-size: 0.8em;
+  top: 25%;
+  }
+
+  .time{
+  font-size: 0.8em;
+  top: 50%;
+  }
+
+  .sunriseHours{
+  font-size: 0.5em;
+  left: 0;
+  }
+
+  .sunsetHours{
+  font-size: 0.5em;
+  right: 0;
+  }
+  }
 
 </style>

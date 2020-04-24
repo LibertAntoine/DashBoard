@@ -3,8 +3,10 @@
     "",
     "\\fonts",
     "\\src",
-    "\\src\\components"
+    "\\src\\components",
+    "\\src\\components\\D3",
+    "\\src\\services"
   ],
-  "SelectedNode": "\\src\\components\\MoonPhase.vue",
+  "SelectedNode": "\\src\\components\\CelestialDisplay.vue",
   "PreviewInSolutionExplorer": false
 }

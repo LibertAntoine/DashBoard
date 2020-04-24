@@ -7,7 +7,8 @@
         autosize:true,
         yaxis: {range: range},
         barmode: 'group',
-        margin: {l: 50, r: 50, b: 50, t: 50, pad: 4}
+        margin: {l: 50, r: 50, b: 50, t: 50, pad: 4},
+        font: {color:'#254558', size: 10, family: 'Karla'}
     }"/>
   </div>
 </template>
