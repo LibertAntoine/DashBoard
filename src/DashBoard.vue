@@ -68,10 +68,8 @@
                         />
         </sui-segment>
         <sui-segment>
-          <MoonPhase
-                                  :testPercentage='MoonPhaseTestPercentage'
-                                  width= 'auto'
-                    			 	 	     />
+          <MoonPhase :testPercentage='MoonPhaseTestPercentage' width= 'auto' />
+          <input type="range" min="0" max="100" value="25" class="slider" @input="updatePercentage" >
         </sui-segment>
         <sui-segment>
           <sui-statistic in-group='' >

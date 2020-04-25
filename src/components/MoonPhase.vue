@@ -51,7 +51,7 @@ export default {
         },
         sunIntensity() {
             const twice = this.percentage * 2;
-            return easingFunctions.inOutQuart(twice < 1 ? twice : 2 - twice);
+            return easingFunctions.inOutQuad(twice < 1 ? twice : 2 - twice);
         },
         // percentage Between Two New Moon
         percentage() {
