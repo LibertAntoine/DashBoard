@@ -68,8 +68,8 @@
                         />
         </sui-segment>
         <sui-segment>
-          <MoonPhase :testPercentage='MoonPhaseTestPercentage' width= 'auto' />
           <input type="range" min="0" max="100" value="25" class="slider" @input="updatePercentage" >
+          <MoonPhase :testPercentage='MoonPhaseTestPercentage' width= 'auto' />
         </sui-segment>
         <sui-segment>
           <sui-statistic in-group='' >
@@ -141,6 +141,7 @@ export default {
   },
   data () {
     return {
+      angle : 0,
       searchInput: {
         placeholder: "Enter Location...",
         value: "",
@@ -391,6 +392,10 @@ export default {
   padding-right: 5%;
   width: 100%;
   }
+  
+	.slider {
+      width: 150px;
+	}
 
   .label{
   margin-left: 5%;
@@ -466,7 +471,11 @@ export default {
   margin: 0;
   width: 50%;
   }
-  }
+
+	.slider {
+      width: 90px;
+	}
+}
 
   @media (max-width: 450px) {
 
@@ -540,6 +549,9 @@ export default {
   #right h2{
   font-size: 1em;
   }
-  }
 
+	.slider {
+      width: 60px;
+	}
+}
 </style>

@@ -10,9 +10,6 @@
                 </g>
             </svg>
         </div>
-        <div class="slider">
-		  	  	0  <input type="range" v-model="angle" id="volume" min="5" max="40">  180
-		</div>
     </div>
 </template>
 
@@ -27,7 +24,6 @@ export default {
     data() {
         return {
             time: { year: 0, month: 0, day: 0 },
-            angle : 0
         }
     },
     created() {
@@ -97,7 +93,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style scoped>
 
     .moonPhase {
         position: relative;
@@ -108,7 +104,7 @@ export default {
         border-radius: 10px;
         /* offset-x | offset-y | blur-radius | color */
         box-shadow: 2vw 2vw 6vw #dddddd;
-        height: 100%;
+        height: 90%;
         
     }
 
@@ -116,7 +112,7 @@ export default {
         width: 100%;
         padding: 0;
         /* aspect ratio of our viewBox svg; */
-        padding-bottom: 100%;
+        /*padding-bottom: 100%;*/
         vertical-align: middle;
         overflow: hidden;
     }
@@ -133,12 +129,5 @@ export default {
         /* border: thin dotted darkgrey; */
     }
 
-	.slider {
-		text-align: center;
-		margin-top: 25px;
 
-		#volume {
-			margin: 0 10px;
-		}
-	}
 </style>
