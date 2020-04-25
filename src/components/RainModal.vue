@@ -117,3 +117,24 @@ export default {
 }
 
 </style>
+<style>
+
+  @media (max-width: 1024px) {
+  .pluviometer-day{
+  width: 12.5%;
+  }
+  }
+
+  @media (max-width: 770px) {
+  .pluviometre svg{
+  width: 100% !important;
+  }
+
+  .pluviometre{
+  margin: 5px 5px !important;
+  }
+    .slider {
+    width: auto !important;
+    }
+    }
+  </style>

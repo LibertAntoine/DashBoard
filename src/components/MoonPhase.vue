@@ -95,39 +95,45 @@ export default {
 
 <style scoped>
 
-    .moonPhase {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border-radius: 10px;
-        /* offset-x | offset-y | blur-radius | color */
-        box-shadow: 2vw 2vw 6vw #dddddd;
-        height: 90%;
-        
-    }
+  .moonPhase {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  /* offset-x | offset-y | blur-radius | color */
+  box-shadow: 2vw 2vw 6vw #dddddd;
+  height: 90%;
 
-    .svgContainter {
-        width: 100%;
-        padding: 0;
-        /* aspect ratio of our viewBox svg; */
-        /*padding-bottom: 100%;*/
-        vertical-align: middle;
-        overflow: hidden;
-    }
+  }
 
-    .svg {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        padding: 0;
-        margin: 0;
-        /* for help debug  */
-        /* border: thin dotted darkgrey; */
-    }
+  .svgContainter {
+  width: 100%;
+  padding: 0;
+  /* aspect ratio of our viewBox svg; */
+  /*padding-bottom: 100%;*/
+  vertical-align: middle;
+  overflow: hidden;
+  }
+
+  .svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  padding: 0;
+  margin: 0;
+  /* for help debug  */
+  /* border: thin dotted darkgrey; */
+  }
+
+  @media (max-width: 450px) {
+  .moonPhase{
+  height: 80%;
+  }
+  }
 
 
 </style>

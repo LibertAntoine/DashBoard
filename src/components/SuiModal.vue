@@ -1,6 +1,6 @@
 <template>
   <div>
-    <sui-modal v-model='open'>
+    <sui-modal v-model='open' id='content'>
       <sui-modal-header> {{ title }} </sui-modal-header>
       <sui-modal-content image>
           <slot></slot>
@@ -32,5 +32,11 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style>
+  @media (max-width: 1024px) {
+  
+  #content > div:first-child{
+  width: 90%;
+  }
+  }
 </style>
