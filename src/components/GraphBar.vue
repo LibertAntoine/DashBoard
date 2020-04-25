@@ -29,14 +29,14 @@ export default {
     window.removeEventListener('resize', this.resizeHandle)
   },
   props: {
-        datasets: {type: Array, require: true},
-        range: {type: Array, require: true},
+        datasets: {type: Array, require: true, default: null},
+        range: {type: Array, require: true, default: null},
         title: {type: String, default: 'title'},
         height: {type: Number, default: 500},
         width: {type: Number, default: 500}
   },
   methods: {
-    resizeHandle(event) {
+    resizeHandle() {
       this.$refs.plotly.relayout({
         width: this.$refs.graphBar.clientWidth - 10 ,
         height: this.height

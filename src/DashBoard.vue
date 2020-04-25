@@ -115,7 +115,7 @@
 </template>
 
 <script>
-import DataApi from './services/Api/Data'
+import IpGeo from './services/Api/IpGeo'
 import DarkSkyData from '@/services/Api/DarkSkyData';
 
 import { dayTimeToDate } from './services/helpers/conversion'
@@ -126,8 +126,6 @@ import MapModal from './components/MapModal'
 import RainModal from './components/RainModal'
 import WeatherMap from './components/WeatherMap'
 import GraphBar from './components/GraphBar'
-import InfoCard from './components/InfoCard'
-
 import RainButton from './components/RainButton'
 import D3Line from './components/D3/D3Line'
 
@@ -141,8 +139,7 @@ export default {
     GraphBar,
 	 RainModal,
 	 RainButton,
-	  D3Line,
-    // InfoCard
+	  D3Line
   },
   data () {
     return {
@@ -189,7 +186,7 @@ export default {
   },
 
   async created () {
-    const getGeoloc = await DataApi.getLocation();
+    const getGeoloc = await IpGeo.getLocation();
     this.location = getGeoloc || this.defaultLoc;
   },
 
@@ -211,7 +208,7 @@ export default {
         const result = await DarkSkyData.getCoordinates(this.searchInput.value)
         
         if(result.error) {
-          console.log(result.error);
+          console.err(result.error);
         } else {
           this.location = {lat: result.latitude, lng: result.longitude};
           this.$refs.mapModal.setSelectedLocation( this.location );
@@ -237,7 +234,7 @@ export default {
         // console.log('forecast', this.forecast);
 
         if (this.forecast.error) {
-          console.log(`Error : ${this.forecast.error}`);
+          console.err(`Error : ${this.forecast.error}`);
         } else {
 
           this.weatherInfos.daily.daysLabels = this.forecast.daily.data.map( day => dayTimeToDate(day.time).split(' ')[0] );
@@ -257,7 +254,7 @@ export default {
         }
 
         // -----sun & moon -----
-  const astroInfos = await DataApi.getLocationInfos(this.location.lat, this.location.lng);
+  const astroInfos = await IpGeo.getLocationInfos(this.location.lat, this.location.lng);
   if (astroInfos) {
   this.locationInformations = {
   ...this.locationInformations,

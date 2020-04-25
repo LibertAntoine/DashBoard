@@ -22,7 +22,8 @@ export default {
 		},
 		timestamp: {
 			type: Array,
-			require: true
+			require: true,
+			default: new Date()
 		},
 		height: {
 			type: Number,
@@ -40,7 +41,7 @@ export default {
 			if ( this.timestamp.length > 0) {
 				const dates = this.timestamp.map(ts => new Date(ts * 1000));
 				const week = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
-				const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+				//const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 				return dates.map(d => `${week[d.getDay()]} ${d.getDate()}`);
 			} else {
 				return []
@@ -63,7 +64,7 @@ export default {
 	},
 
 	watch: {
-		async data(newData, oldData) {
+		async data(newData, /*oldData*/) {
 			// console.log('data changed : ', newData);
 			const waintingCallAnim = () => { 
 				if ( !this.animationInProgress ) { // wait until current animation was done
@@ -126,7 +127,7 @@ export default {
 				d3.select(nodes[i]).call(opacityAnim, 400, i)
 			})
 
-			function opacityAnim(line, duration, index) {
+			function opacityAnim(line, duration, /*index*/) {
 				d3.select({}).transition().duration(duration)
 					.tween("attr:opacity", function() {
 						const interpolate = d3.interpolateNumber(0, 1)
@@ -154,7 +155,7 @@ export default {
 				.start()
 		},
 		showDotsgradually() {
-			const constPushValue = (i) => {
+			const constPushValue = (/*i*/) => {
 				this.animatedData.push(15);
 				// console.log(`${i}:animatedData`, this.animatedData);
 				this.buildDots();
@@ -348,7 +349,7 @@ export default {
 		},
 
 		resizeSvg(svg) {
-			console.log('resizeSvg');
+			//console.log('resizeSvg');
 			const targetWidth = parseInt(d3.select('.line-chart-container').node().getBoundingClientRect().width);
 			svg.attr("width", targetWidth);
 			svg.attr("height", Math.round(targetWidth / this.aspect));

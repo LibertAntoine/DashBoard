@@ -14,8 +14,7 @@
 export default {
   name: 'WeatherMap',
   props: {
-        embedURL: {type: String, require: true},
-        title: {type: String, default: 'title'},
+        embedURL: {type: String, require: true, default : ''},
         height: {type: Number, default: 500}
   }
 }

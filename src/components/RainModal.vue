@@ -24,8 +24,6 @@
 import SuiModal from './SuiModal'
 import Pluviometre from './D3/Pluviometre'
 
-import { dayTimeToDate } from '@/services/helpers/conversion'
-
 export default {
     
     name: 'mapModal',
@@ -69,7 +67,7 @@ export default {
 			this.$refs.pluviometre.forEach(rain => rain.updateWater(0))
 		},
 		toggle() {
-			console.log(this.forecast)
+			//console.log(this.forecast)
 			this.$refs.modal.toggle()
 			this.$refs.pluviometre.forEach((rain, i) => {
 				setTimeout(rain.updateWater,  800 - i*50)

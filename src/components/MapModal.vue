@@ -22,10 +22,10 @@
 </template>
 
 <script>
-import DataApi from '../services/Api/Data'
+import IpGeo from '../services/Api/IpGeo'
 import SuiModal from './SuiModal'
 
-import { latLng, icon, popup } from "leaflet";
+import { latLng } from "leaflet";
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 
 export default {
@@ -97,7 +97,7 @@ export default {
             this.$emit('updated', this.selectedLocation.lat, this.selectedLocation.lng);
         },
         async geolocate() {
-            const location = await DataApi.getLocation();
+            const location = await IpGeo.getLocation();
             if (location) { 
                 this.setSelectedLocation(location.lat, location.lng);
             }
