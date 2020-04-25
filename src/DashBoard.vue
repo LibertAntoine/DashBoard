@@ -68,7 +68,7 @@
                         />
         </sui-segment>
         <sui-segment>
-          <input type="range" min="0" max="100" value="25" class="slider" @input="updatePercentage" >
+          <input type="range" min="0" max="100" value="25" class="slide" @input="updatePercentage" >
           <MoonPhase :testPercentage='MoonPhaseTestPercentage' width= 'auto' />
         </sui-segment>
         <sui-segment>
@@ -393,7 +393,7 @@ export default {
   width: 100%;
   }
   
-	.slider {
+	.slide {
       width: 150px;
 	}
 
@@ -472,7 +472,7 @@ export default {
   width: 50%;
   }
 
-	.slider {
+	.slide {
       width: 90px;
 	}
 }
