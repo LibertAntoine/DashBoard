@@ -10,6 +10,9 @@
                 </g>
             </svg>
         </div>
+        <div class="slider">
+		  	  	0  <input type="range" v-model="angle" id="volume" min="5" max="40">  180
+		</div>
     </div>
 </template>
 
@@ -23,7 +26,8 @@ export default {
     
     data() {
         return {
-            time: { year: 0, month: 0, day: 0 }
+            time: { year: 0, month: 0, day: 0 },
+            angle : 0
         }
     },
     created() {
@@ -83,7 +87,6 @@ export default {
             default: 0,
         }
     },
-
     methods: {
         updateDate(date) {
             this.time.year = date.getFullYear();
@@ -94,7 +97,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 
     .moonPhase {
         position: relative;
@@ -130,4 +133,12 @@ export default {
         /* border: thin dotted darkgrey; */
     }
 
+	.slider {
+		text-align: center;
+		margin-top: 25px;
+
+		#volume {
+			margin: 0 10px;
+		}
+	}
 </style>

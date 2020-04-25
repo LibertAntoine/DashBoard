@@ -8,7 +8,7 @@
 			  </div>
         </div>
 		  	  <div class="slider">
-		  	  	0  <input type="range" v-model="maxVal" id="volume" min="5" max="40">  40
+		  	  	0  <input type="range" v-model="maxVal" id="angle" min="5" max="40">  40
 				<br>
 		  	  	range goes from 0 to {{ maxVal }}mm
 		  	  </div>
@@ -110,7 +110,7 @@ export default {
 		text-align: center;
 		margin-top: 25px;
 
-		#volume {
+		#angle {
 			margin: 0 10px;
 		}
 	}
