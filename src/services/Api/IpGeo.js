@@ -36,24 +36,24 @@ export default {
         return {lat: res.coords.latitude, lng: res.coords.longitude, accuracy: res.coords.accuracy}; 
       })  
       .catch((error) => {
-        console.err('Erreur lors de la géolocalisation :');
+        console.error('Erreur lors de la géolocalisation :');
         switch (error.code) {
           case error.TIMEOUT:
-            console.err('Timeout !');
+            console.error('Timeout !');
             break;
           case error.PERMISSION_DENIED:
-            console.err('Vous n’avez pas donné la permission');
+            console.error('Vous n’avez pas donné la permission');
             break;
           case error.POSITION_UNAVAILABLE:
-            console.err('La position n’a pu être déterminée');
+            console.error('La position n’a pu être déterminée');
             break;
           case error.UNKNOWN_ERROR:
-            console.err('Erreur inconnue');
+            console.error('Erreur inconnue');
             break;
         }
       });
     } else {
-      console.err('API navigator.geolocation non disponible');
+      console.error('API navigator.geolocation non disponible');
       return undefined;
     }
   }
