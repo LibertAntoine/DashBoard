@@ -3,7 +3,7 @@
 	<div class="pluviometer-modal">
         <div class="pluviometers-container">
 		  	  <div class="pluviometer-day" v-for="(t, index) in time" :key="index" >
-			  	  <Pluviometre :max="maxVal" :mm="precipIntensity[index] * 24" ref='pluviometre'/>
+			  	  <Pluviometre :max="+maxVal" :mm="precipIntensity[index] * 24" ref='pluviometre'/>
 				  <div class="day">{{ t }}</div>
 			  </div>
         </div>
