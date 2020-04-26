@@ -1,7 +1,5 @@
-# dashboard
-
-
-think to add .env.local file in root with VUE_APP_APIKEY
+# Weather Dashboard
+This project is a Weather DashBoard create for a course of Javascript at IMAC school.
 
 ## Project setup
 ```
@@ -9,6 +7,7 @@ npm install
 ```
 
 ### Compiles and hot-reloads for development
+think to add .env.local file in root with VUE_APP_APIKEY before run
 ```
 npm run serve
 ```
