@@ -8,5 +8,5 @@ export default {
   getAddress: async (lat, lng) => (await fetch(`${ADDRESS_API_URL}&lat=${lat}&lon=${lng}`)).json(),
   getForecast: async (lat, lng) => (await fetch(`${WEATHER_API_URL}${lat},${lng}?units=si&lang=fr`)).json(),
   getCoordinates: async (location) => (await fetch(`${GEO_API_URL}${location}`)).json(),
-  getEmbedURL: (lat, lng) => `https://maps.darksky.net/@temperature,${lat},${lng},7?domain="+encodeURIComponent(window.location.href)+"&auth=1525213550_b5fc128e7789bb56048952cc704c8473&embed=true&amp;timeControl=false&amp;fieldControl=false;`,
+  getEmbedURL: (lat, lng) => `https://maps.darksky.net/@wind_speed,${lat},${lng},7?domain="+encodeURIComponent(window.location.href)+"&auth=1525213550_b5fc128e7789bb56048952cc704c8473&embed=true&amp;timeControl=false&amp;fieldControl=false;`,
 };
