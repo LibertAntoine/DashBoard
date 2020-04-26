@@ -63,12 +63,14 @@ export default {
 			})
 		},
 		close() {
+			//this.$refs.pluviometre.forEach(rain => rain.updateWater(0))
+			//debugger
 			this.$refs.modal.toggle();
-			this.$refs.pluviometre.forEach(rain => rain.updateWater(0))
 		},
 		toggle() {
 			//console.log(this.forecast)
 			this.$refs.modal.toggle()
+			this.$refs.pluviometre.forEach(rain => rain.setTo0())
 			this.$refs.pluviometre.forEach((rain, i) => {
 				setTimeout(rain.updateWater,  800 - i*50)
 			})
